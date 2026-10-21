@@ -1,516 +1,435 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#121212">
-
 <title>Sound Capsule+</title>
 
 <style>
 :root {
-  --bg: #121212;
-  --card: #242424;
-  --green: #1ed760;
-  --text: #ffffff;
-  --muted: #b3b3b3;
+  --bg:#121212;
+  --card:#242424;
+  --green:#1ed760;
+  --text:#fff;
+  --muted:#b3b3b3;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { box-sizing:border-box; }
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 
 button {
-  cursor: pointer;
-  font: inherit;
-  -webkit-tap-highlight-color: transparent;
+  font:inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
 
 button:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 3px;
+  outline:2px solid var(--green);
+  outline-offset:3px;
 }
 
-header {
-  padding: 28px 20px 0;
-  max-width: 740px;
-  margin: auto;
+header,main {
+  max-width:700px;
+  margin:auto;
+  padding-left:18px;
+  padding-right:18px;
 }
+
+header { padding-top:28px; }
+
+main { padding-bottom:125px; }
 
 h1 {
-  font-size: 27px;
-  margin: 0 0 7px;
-  letter-spacing: -0.5px;
+  margin:0 0 6px;
+  font-size:27px;
 }
 
 h2 {
-  font-size: 20px;
-  margin: 25px 0 12px;
+  margin:26px 0 13px;
+  font-size:20px;
 }
 
 .subtitle {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
 }
-
-main {
-  padding: 0 18px 120px;
-  max-width: 700px;
-  margin: auto;
-}
-
-/* AUTENTICAÇÃO */
 
 .auth-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-  margin-bottom: 27px;
-}
-
-.spotify-btn {
-  background: var(--green);
-  color: #000;
-  border: none;
-  padding: 11px 17px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.secondary-btn {
-  background: #292929;
-  color: #b3b3b3;
-  border: 1px solid #383838;
-  padding: 7px 13px;
-  border-radius: 30px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.secondary-btn:hover {
-  color: white;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:21px 0 27px;
 }
 
 .status {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.4;
+  color:var(--muted);
+  font-size:12px;
+  flex:1;
 }
 
-.auth-bar.connected .status {
-  flex: 1;
+.spotify-btn {
+  border:0;
+  border-radius:30px;
+  padding:11px 17px;
+  background:var(--green);
+  color:#000;
+  font-size:13px;
+  font-weight:700;
 }
 
-.auth-bar.connected .secondary-btn {
-  margin-left: auto;
+.exit-btn {
+  border:1px solid #383838;
+  border-radius:30px;
+  padding:7px 13px;
+  background:#292929;
+  color:#bbb;
+  font-size:12px;
 }
 
-/* SELEÇÃO DE FONTE E PERÍODO */
-
-.mode-switch {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  margin-bottom: 13px;
-  padding-bottom: 3px;
-  scrollbar-width: none;
+.mode-switch,.tabs {
+  display:flex;
+  gap:9px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  padding-bottom:4px;
 }
 
 .mode-switch::-webkit-scrollbar,
 .tabs::-webkit-scrollbar {
-  display: none;
+  display:none;
 }
 
-.period-btn {
-  background: #292929;
-  color: white;
-  border: none;
-  padding: 11px 15px;
-  border-radius: 30px;
-  white-space: nowrap;
-  font-size: 13px;
-  flex-shrink: 0;
+.mode-switch { margin-bottom:13px; }
+
+.tabs {
+  margin:21px 0 22px;
 }
 
-.period-btn.active {
-  background: var(--green);
-  color: black;
-  font-weight: 700;
+.pill {
+  flex-shrink:0;
+  border:0;
+  border-radius:30px;
+  background:#292929;
+  color:white;
+  padding:11px 15px;
+  font-size:13px;
+  white-space:nowrap;
 }
 
-.period-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
+.pill.active {
+  background:var(--green);
+  color:#000;
+  font-weight:700;
 }
-
-/* SELETOR DE MÊS */
 
 .month-selector {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 17px 0 20px;
-}
-
-.month-selector button {
-  background: #333;
-  color: white;
-  border: none;
-  padding: 9px 16px;
-  border-radius: 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:20px 0;
 }
 
 .month-selector strong {
-  font-size: 17px;
+  text-align:center;
+  font-size:17px;
 }
 
-/* ABAS SUPERIORES */
-
-.tabs {
-  display: flex;
-  gap: 9px;
-  overflow-x: auto;
-  margin-top: 20px;
-  margin-bottom: 23px;
-  padding-bottom: 3px;
-  scrollbar-width: none;
+.arrow {
+  border:0;
+  border-radius:30px;
+  background:#333;
+  color:white;
+  padding:9px 16px;
 }
-
-.tabs button {
-  background: #292929;
-  color: white;
-  border: none;
-  padding: 11px 15px;
-  border-radius: 30px;
-  white-space: nowrap;
-  font-size: 13px;
-  flex-shrink: 0;
-}
-
-.tabs button.active {
-  background: var(--green);
-  color: black;
-  font-weight: 700;
-}
-
-/* CARTÕES */
 
 .card {
-  background: var(--card);
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 15px;
-}
-
-.clickable {
-  cursor: pointer;
+  background:var(--card);
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:15px;
 }
 
 .label {
-  color: var(--muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color:var(--muted);
+  text-transform:uppercase;
+  font-size:11px;
+  letter-spacing:1px;
 }
 
 .big-number {
-  color: var(--green);
-  font-size: 43px;
-  font-weight: 800;
-  margin-top: 10px;
+  margin-top:9px;
+  color:var(--green);
+  font-size:42px;
+  font-weight:800;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
 .favorite {
-  min-height: 170px;
-  overflow: hidden;
-}
-
-.favorite .emoji {
-  font-size: 40px;
-  margin: 16px 0;
+  min-height:160px;
+  overflow:hidden;
+  cursor:pointer;
 }
 
 .favorite strong {
-  font-size: 16px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
+  display:block;
+  overflow-wrap:anywhere;
+  font-size:15px;
+  line-height:1.4;
 }
 
 .favorite-image {
-  width: 65px;
-  height: 65px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin: 15px 0 10px;
-  display: block;
+  width:65px;
+  height:65px;
+  object-fit:cover;
+  border-radius:12px;
+  display:block;
+  margin:15px 0 10px;
 }
 
-.favorite-image.artist {
-  border-radius: 50%;
+.favorite-image.artist { border-radius:50%; }
+
+.emoji {
+  font-size:40px;
+  margin:17px 0;
 }
 
-.blue {
-  color: #8bc5ff;
-}
-
-.yellow {
-  color: #ffe17d;
-}
-
-/* DESTAQUES */
-
-.highlight-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.highlight-item {
-  background: #333;
-  padding: 16px;
-  border-radius: 12px;
-}
-
-.highlight-item strong {
-  display: block;
-  color: var(--green);
-  font-size: 22px;
-}
-
-.highlight-item span {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* RANKINGS */
+.blue { color:#8bc5ff; }
+.yellow { color:#ffe17d; }
 
 .rank-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 0;
-  border-bottom: 1px solid #333;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid #363636;
 }
 
-.rank-item:last-child {
-  border-bottom: none;
-}
+.rank-item:last-child { border-bottom:0; }
 
 .rank-number {
-  width: 25px;
-  color: var(--muted);
-  flex-shrink: 0;
+  width:25px;
+  color:var(--muted);
+  flex-shrink:0;
 }
 
 .rank-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #414141;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#414141;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
 }
 
-.rank-icon.square {
-  border-radius: 8px;
-}
+.rank-icon.square { border-radius:8px; }
 
 .rank-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 .rank-info {
-  flex: 1;
-  min-width: 0;
+  flex:1;
+  min-width:0;
 }
 
 .rank-info strong {
-  display: block;
-  font-size: 14px;
-  overflow-wrap: anywhere;
+  display:block;
+  font-size:14px;
+  overflow-wrap:anywhere;
 }
 
 .rank-info small {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 4px;
-  line-height: 1.4;
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.4;
+  margin-top:4px;
 }
 
-/* AVISOS REMOVÍVEIS */
-
 .notice {
-  position: relative;
-  background: #19251e;
-  border: 1px solid #35503e;
-  border-radius: 13px;
-  padding: 15px 43px 15px 15px;
-  margin-bottom: 16px;
-  font-size: 12px;
-  line-height: 1.6;
+  position:relative;
+  padding:15px 43px 15px 15px;
+  margin-bottom:16px;
+  border-radius:13px;
+  background:#19251e;
+  border:1px solid #35503e;
+  font-size:12px;
+  line-height:1.6;
 }
 
 .notice.error {
-  background: #301d1d;
-  border-color: #784343;
-  color: #ffd4d4;
+  background:#301d1d;
+  border-color:#784343;
+  color:#ffd4d4;
 }
 
 .notice-close {
-  position: absolute;
-  top: 7px;
-  right: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  color: #b3b3b3;
-  border: none;
-  border-radius: 50%;
-  font-size: 20px;
-  line-height: 1;
-}
-
-.notice-close:hover {
-  background: #ffffff15;
-  color: white;
-}
-
-/* HISTÓRICO */
-
-.year-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin: 25px 0;
-}
-
-.year-row button {
-  background: #333;
-  border: none;
-  color: white;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-}
-
-.month-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.month-tile {
-  background: #292929;
-  color: white;
-  border: 1px solid #424242;
-  border-radius: 13px;
-  padding: 18px 5px;
-}
-
-.month-tile small {
-  display: block;
-  color: #aaa;
-  font-size: 10px;
-  margin-top: 8px;
-}
-
-.month-tile.demo {
-  border-color: var(--green);
+  position:absolute;
+  top:7px;
+  right:8px;
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:#bbb;
+  font-size:20px;
 }
 
 .empty {
-  color: var(--muted);
-  text-align: center;
-  padding: 25px 8px;
-  line-height: 1.6;
-  font-size: 14px;
+  padding:25px 8px;
+  color:var(--muted);
+  text-align:center;
+  font-size:14px;
+  line-height:1.7;
 }
 
-/* NAVEGAÇÃO INFERIOR */
+.year-row {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:22px;
+  margin:25px 0;
+}
+
+.month-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.month-tile {
+  border:1px solid #444;
+  border-radius:13px;
+  padding:17px 5px;
+  background:#292929;
+  color:white;
+}
+
+.month-tile.available { border-color:var(--green); }
+
+.month-tile small {
+  display:block;
+  margin-top:7px;
+  font-size:10px;
+  color:#aaa;
+}
+
+.upload-box {
+  border:1px dashed #666;
+  border-radius:17px;
+  padding:22px;
+  text-align:center;
+  background:#1b1b1b;
+  margin-bottom:18px;
+}
+
+.upload-box p {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
+.upload-btn {
+  display:inline-block;
+  border:0;
+  border-radius:30px;
+  padding:12px 18px;
+  background:var(--green);
+  color:black;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.danger-btn {
+  background:#372424;
+  border:1px solid #704040;
+  border-radius:30px;
+  color:#ffbaba;
+  padding:9px 13px;
+  font-size:12px;
+}
+
+.stat-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.stat {
+  padding:17px;
+  border-radius:13px;
+  background:#292929;
+}
+
+.stat strong {
+  display:block;
+  color:var(--green);
+  font-size:23px;
+  overflow-wrap:anywhere;
+}
+
+.stat span {
+  color:var(--muted);
+  font-size:11px;
+}
 
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #080808;
-  border-top: 1px solid #333;
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 4px max(18px, env(safe-area-inset-bottom));
-  z-index: 10;
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  z-index:10;
+  display:flex;
+  justify-content:space-around;
+  background:#080808;
+  border-top:1px solid #333;
+  padding:12px 4px max(18px,env(safe-area-inset-bottom));
 }
 
 .bottom-nav button {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 11px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  flex: 1;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  border:0;
+  background:none;
+  color:var(--muted);
+  font-size:11px;
 }
 
-.bottom-nav button.active {
-  color: var(--green);
-}
+.bottom-nav button.active { color:var(--green); }
 
-.bottom-nav .icon {
-  font-size: 23px;
-}
+.bottom-nav .icon { font-size:23px; }
 
-.hidden {
-  display: none !important;
-}
+.hidden { display:none!important; }
 
-@media (max-width: 360px) {
-  .period-btn,
-  .tabs button {
-    padding: 10px 12px;
-    font-size: 12px;
-  }
-
-  .card {
-    padding: 16px;
-  }
-
-  .favorite strong {
-    font-size: 14px;
-  }
+@media(max-width:360px) {
+  .pill { padding:10px 12px; font-size:12px; }
+  .card { padding:16px; }
+  .favorite strong { font-size:14px; }
 }
 </style>
 </head>
@@ -518,15 +437,10 @@ main {
 <body>
 
 <header>
-
   <h1>Sound Capsule+ 💚</h1>
+  <div class="subtitle">Sua história musical, mês a mês.</div>
 
-  <div class="subtitle">
-    Sua história musical, mês a mês.
-  </div>
-
-  <div class="auth-bar" id="authBar">
-
+  <div class="auth-bar">
     <button
       class="spotify-btn"
       id="connectBtn"
@@ -539,109 +453,57 @@ main {
     </span>
 
     <button
-      class="secondary-btn hidden"
+      class="exit-btn hidden"
       id="disconnectBtn"
       onclick="disconnectSpotify()">
       Sair
     </button>
-
   </div>
-
 </header>
 
 <main>
 
-  <!-- FONTE E PERÍODO -->
-
   <div id="controls"></div>
 
-  <!-- SELETOR DE MÊS -->
-
-  <div class="month-selector" id="monthSelector">
-
-    <button onclick="changeMonth(-1)" aria-label="Mês anterior">
-      ‹
-    </button>
-
-    <strong id="monthTitle">
-      Setembro 2024
-    </strong>
-
-    <button onclick="changeMonth(1)" aria-label="Próximo mês">
-      ›
-    </button>
-
+  <div class="month-selector hidden" id="monthSelector">
+    <button class="arrow" onclick="changeMonth(-1)">‹</button>
+    <strong id="monthTitle"></strong>
+    <button class="arrow" onclick="changeMonth(1)">›</button>
   </div>
 
-  <!-- ABAS -->
-
-  <div class="tabs" id="tabs">
-
-    <button class="active" onclick="setTab('overview')">
+  <div class="tabs hidden" id="tabs">
+    <button class="pill" data-tab="overview" onclick="setTab('overview')">
       Visão geral
     </button>
-
-    <button onclick="setTab('artists')">
+    <button class="pill" data-tab="artists" onclick="setTab('artists')">
       Artistas
     </button>
-
-    <button onclick="setTab('songs')">
+    <button class="pill" data-tab="songs" onclick="setTab('songs')">
       Músicas
     </button>
-
-    <button onclick="setTab('genres')">
-      Gêneros
-    </button>
-
   </div>
 
-  <!-- AVISOS -->
-
   <div id="messages"></div>
-
-  <!-- CONTEÚDO -->
-
   <div id="content"></div>
 
 </main>
 
-<nav class="bottom-nav">
+<nav class="bottom-nav" id="bottomNav"></nav>
 
-  <button
-    class="active"
-    data-page="home"
-    onclick="setPage('home')">
-
-    <span class="icon">⌂</span>
-    Início
-
-  </button>
-
-  <button
-    data-page="history"
-    onclick="setPage('history')">
-
-    <span class="icon">▦</span>
-    Histórico
-
-  </button>
-
-  <button
-    data-page="all"
-    onclick="setPage('all')">
-
-    <span class="icon">∞</span>
-    Todo o período
-
-  </button>
-
-</nav>
+<input
+  type="file"
+  id="historyFiles"
+  accept=".json,application/json"
+  multiple
+  hidden
+  onchange="importHistory(event)"
+>
 
 <script>
 
-/* ========================================
-   CONFIGURAÇÕES DO SPOTIFY
-======================================== */
+/* ======================================
+   CONFIGURAÇÕES
+====================================== */
 
 const CLIENT_ID =
   "6075f18370344faeb7af4270b39823db";
@@ -649,292 +511,224 @@ const CLIENT_ID =
 const REDIRECT_URI =
   "https://gustavobianqui.github.io/sound-capsule-plus/";
 
-const SCOPES =
-  "user-top-read user-read-recently-played";
+const SCOPES = "user-top-read";
 
 const AUTH_KEY = "sound_capsule_auth";
+const CACHE_KEY = "sound_capsule_api_cache";
+const CACHE_DURATION = 60 * 60 * 1000;
 
-/* ========================================
-   ESTADO DO APLICATIVO
-======================================== */
+const DB_NAME = "sound_capsule_database";
+const DB_VERSION = 1;
+const STORE_NAME = "history";
+
+/* ======================================
+   ESTADO
+====================================== */
+
+const $ = id => document.getElementById(id);
 
 const months = [
-  "Janeiro", "Fevereiro", "Março",
-  "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro",
-  "Outubro", "Novembro", "Dezembro"
+  "Janeiro","Fevereiro","Março",
+  "Abril","Maio","Junho",
+  "Julho","Agosto","Setembro",
+  "Outubro","Novembro","Dezembro"
 ];
 
-let currentMonth = 8;
-let currentYear = 2024;
+let auth = loadAuth();
+
+let source = auth ? "spotify" : "history";
+let range = "short_term";
 
 let currentPage = "home";
 let currentTab = "overview";
 
-let source = "demo";
-let range = "short_term";
+let selectedMonth = "2024-09";
+let historyYear = 2024;
 
 let spotifyArtists = [];
 let spotifySongs = [];
 
-let auth = loadAuth();
+let listeningHistory = [];
 
 let dismissedNotices = new Set();
-
 let currentMessage = null;
 
-/* ========================================
-   DADOS DEMONSTRATIVOS
-======================================== */
+let loadingSpotify = false;
+let spotifyRequestId = 0;
+
+/* ======================================
+   DEMONSTRAÇÃO
+====================================== */
 
 const demo = {
-
-  minutes: 9974,
-
-  artists: [
-    {
-      name: "Henrique & Juliano",
-      minutes: 2431
-    },
-    {
-      name: "Michael Jackson",
-      minutes: 1672
-    },
-    {
-      name: "Fred & Gustavo",
-      minutes: 1098
-    },
-    {
-      name: "Jorge & Mateus",
-      minutes: 856
-    },
-    {
-      name: "Bruno & Marrone",
-      minutes: 724
-    }
+  month:"2024-09",
+  minutes:9974,
+  artists:[
+    {name:"Henrique & Juliano",minutes:2431},
+    {name:"Michael Jackson",minutes:1672},
+    {name:"Fred & Gustavo",minutes:1098},
+    {name:"Jorge & Mateus",minutes:856},
+    {name:"Bruno & Marrone",minutes:724}
   ],
-
-  songs: [
-    {
-      name: "Ainda Gosto de Você",
-      artist: "Sorriso Maroto",
-      plays: 127
-    },
-    {
-      name: "Arranhão",
-      artist: "Henrique & Juliano",
-      plays: 92
-    },
-    {
-      name: "A Maior Saudade",
-      artist: "Henrique & Juliano",
-      plays: 78
-    },
-    {
-      name: "Billie Jean",
-      artist: "Michael Jackson",
-      plays: 73
-    }
-  ],
-
-  highlights: {
-    songs: 1432,
-    artists: 183,
-    albums: 312,
-    discoveries: 27
-  }
+  songs:[
+    {name:"Ainda Gosto de Você",artist:"Sorriso Maroto",plays:127},
+    {name:"Arranhão",artist:"Henrique & Juliano",plays:92},
+    {name:"A Maior Saudade",artist:"Henrique & Juliano",plays:78},
+    {name:"Billie Jean",artist:"Michael Jackson",plays:73}
+  ]
 };
 
-/* ========================================
-   FUNÇÕES AUXILIARES
-======================================== */
-
-const $ = id => document.getElementById(id);
+/* ======================================
+   UTILITÁRIOS
+====================================== */
 
 function escapeHTML(value) {
-
   return String(value ?? "").replace(
     /[&<>"']/g,
     c => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
     })[c]
   );
-
 }
 
 function safeImage(url) {
-
   if (!url) return "";
 
   try {
-
     const parsed = new URL(url);
-
-    if (parsed.protocol !== "https:") {
-      return "";
-    }
-
-    return escapeHTML(parsed.href);
-
+    return parsed.protocol === "https:"
+      ? escapeHTML(parsed.href)
+      : "";
   } catch {
     return "";
   }
-
 }
 
-function noticeHTML(id, message, error = false) {
+function number(value) {
+  return Math.round(value).toLocaleString("pt-BR");
+}
 
-  if (dismissedNotices.has(id)) {
-    return "";
-  }
+function minutes(ms) {
+  return Math.round(ms / 60000);
+}
+
+function monthName(key) {
+  const [year,month] = key.split("-").map(Number);
+  return months[month-1] + " " + year;
+}
+
+function currentMonthKey() {
+  return new Date().toISOString().slice(0,7);
+}
+
+function noticeHTML(id,text,error=false) {
+  if (dismissedNotices.has(id)) return "";
 
   return `
-    <div class="notice ${error ? "error" : ""}">
-
+    <div class="notice ${error?"error":""}">
       <button
         class="notice-close"
-        aria-label="Fechar aviso"
-        onclick="dismissNotice('${id}')">
-        ×
-      </button>
-
-      ${escapeHTML(message)}
-
+        onclick="dismissNotice('${id}')"
+        aria-label="Fechar aviso">×</button>
+      ${escapeHTML(text)}
     </div>
   `;
-
 }
 
 function dismissNotice(id) {
-
   dismissedNotices.add(id);
 
-  if (
-    currentMessage &&
-    currentMessage.id === id
-  ) {
+  if (currentMessage?.id === id) {
     currentMessage = null;
   }
 
   render();
-
 }
 
-function notify(message, error = false) {
-
-  if (!message) {
-    currentMessage = null;
-    renderMessages();
-    return;
-  }
-
-  const id = "message_" + Date.now();
-
-  currentMessage = {
-    id,
-    message,
-    error
-  };
+function notify(text,error=false) {
+  currentMessage = text
+    ? {
+        id:"message_"+Date.now(),
+        text,
+        error
+      }
+    : null;
 
   renderMessages();
-
 }
 
 function renderMessages() {
-
-  if (!currentMessage) {
-    $("messages").innerHTML = "";
-    return;
-  }
-
-  $("messages").innerHTML = noticeHTML(
-    currentMessage.id,
-    currentMessage.message,
-    currentMessage.error
-  );
-
+  $("messages").innerHTML = currentMessage
+    ? noticeHTML(
+        currentMessage.id,
+        currentMessage.text,
+        currentMessage.error
+      )
+    : "";
 }
 
+/* ======================================
+   AUTENTICAÇÃO SPOTIFY
+====================================== */
+
 function loadAuth() {
-
   try {
-
     return JSON.parse(
       sessionStorage.getItem(AUTH_KEY) || "null"
     );
-
   } catch {
     return null;
   }
-
 }
 
 function saveAuth(data) {
-
   auth = data;
 
   if (data) {
-
     sessionStorage.setItem(
       AUTH_KEY,
       JSON.stringify(data)
     );
-
   } else {
-
     sessionStorage.removeItem(AUTH_KEY);
-
   }
-
 }
 
-/* ========================================
-   AUTENTICAÇÃO SPOTIFY — PKCE
-======================================== */
-
-function generateVerifier() {
-
+function randomString() {
   const bytes = crypto.getRandomValues(
     new Uint8Array(64)
   );
 
   return Array.from(
     bytes,
-    b => b.toString(16).padStart(2, "0")
+    b => b.toString(16).padStart(2,"0")
   ).join("");
-
 }
 
-async function generateChallenge(verifier) {
+async function challengeFor(verifier) {
+  const bytes = new TextEncoder().encode(verifier);
 
-  const data = new TextEncoder().encode(verifier);
-
-  const digest = await crypto.subtle.digest(
+  const hash = await crypto.subtle.digest(
     "SHA-256",
-    data
+    bytes
   );
 
   return btoa(
-    String.fromCharCode(
-      ...new Uint8Array(digest)
-    )
+    String.fromCharCode(...new Uint8Array(hash))
   )
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-
+  .replace(/\+/g,"-")
+  .replace(/\//g,"_")
+  .replace(/=+$/,"");
 }
 
 async function connectSpotify() {
-
   try {
-
-    const verifier = generateVerifier();
-    const state = generateVerifier();
+    const verifier = randomString();
+    const state = randomString();
 
     sessionStorage.setItem(
       "spotify_verifier",
@@ -946,219 +740,151 @@ async function connectSpotify() {
       state
     );
 
-    const challenge =
-      await generateChallenge(verifier);
+    const challenge = await challengeFor(verifier);
 
     const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      response_type: "code",
-      redirect_uri: REDIRECT_URI,
-      scope: SCOPES,
-      code_challenge_method: "S256",
-      code_challenge: challenge,
-      state: state
+      client_id:CLIENT_ID,
+      response_type:"code",
+      redirect_uri:REDIRECT_URI,
+      scope:SCOPES,
+      code_challenge_method:"S256",
+      code_challenge:challenge,
+      state
     });
 
-    window.location.href =
+    location.href =
       "https://accounts.spotify.com/authorize?" +
       params.toString();
 
-  } catch (error) {
-
-    notify(
-      "Erro ao iniciar conexão: " + error.message,
-      true
-    );
-
+  } catch(error) {
+    notify("Erro na conexão: "+error.message,true);
   }
-
 }
 
-async function requestToken(params) {
-
+async function tokenRequest(params) {
   const response = await fetch(
     "https://accounts.spotify.com/api/token",
     {
-      method: "POST",
-      headers: {
-        "Content-Type":
-          "application/x-www-form-urlencoded"
+      method:"POST",
+      headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
       },
-      body: new URLSearchParams(params)
+      body:new URLSearchParams(params)
     }
   );
 
   const data = await response.json();
 
   if (!response.ok) {
-
     throw new Error(
       data.error_description ||
       data.error ||
-      "Erro na autenticação"
+      "Erro de autenticação"
     );
-
   }
 
   return data;
-
 }
 
-async function handleSpotifyCallback() {
+async function handleCallback() {
+  const query = new URLSearchParams(location.search);
 
-  const query = new URLSearchParams(
-    window.location.search
-  );
-
-  if (
-    !query.has("code") &&
-    !query.has("error")
-  ) {
+  if (!query.has("code") && !query.has("error")) {
     return;
   }
 
   const code = query.get("code");
-  const returnedState = query.get("state");
+  const state = query.get("state");
   const error = query.get("error");
 
   history.replaceState(
     {},
     "",
-    window.location.pathname
+    location.pathname
   );
 
   if (error) {
-
-    notify(
-      "Autorização não concluída: " + error,
-      true
-    );
-
+    notify("Autorização recusada: "+error,true);
     return;
   }
 
-  const verifier = sessionStorage.getItem(
-    "spotify_verifier"
-  );
+  const verifier =
+    sessionStorage.getItem("spotify_verifier");
 
-  const expectedState = sessionStorage.getItem(
-    "spotify_state"
-  );
+  const expectedState =
+    sessionStorage.getItem("spotify_state");
 
   sessionStorage.removeItem("spotify_verifier");
   sessionStorage.removeItem("spotify_state");
 
-  if (
-    !verifier ||
-    !expectedState ||
-    expectedState !== returnedState
-  ) {
-
-    notify(
-      "Falha na verificação de segurança. Tente novamente.",
-      true
-    );
-
+  if (!verifier || !expectedState || state !== expectedState) {
+    notify("Falha na verificação de segurança.",true);
     return;
   }
 
   try {
-
-    const token = await requestToken({
-      client_id: CLIENT_ID,
-      grant_type: "authorization_code",
-      code: code,
-      redirect_uri: REDIRECT_URI,
-      code_verifier: verifier
+    const token = await tokenRequest({
+      client_id:CLIENT_ID,
+      grant_type:"authorization_code",
+      code,
+      redirect_uri:REDIRECT_URI,
+      code_verifier:verifier
     });
 
     saveAuth({
       ...token,
-      expires_at:
-        Date.now() + token.expires_in * 1000
+      expires_at:Date.now()+token.expires_in*1000
     });
 
     source = "spotify";
-
     notify("Spotify conectado com sucesso!");
 
-    await loadSpotifyData();
-
-  } catch (error) {
-
-    notify(
-      "Erro ao conectar: " + error.message,
-      true
-    );
-
+  } catch(error) {
+    notify("Erro ao conectar: "+error.message,true);
   }
-
 }
 
-/* ========================================
-   RENOVAÇÃO DO TOKEN
-======================================== */
+async function validToken() {
+  if (!auth) throw new Error("Spotify não conectado.");
 
-async function getValidToken() {
-
-  if (!auth) {
-    throw new Error("Conta não conectada");
-  }
-
-  if (
-    Date.now() <
-    auth.expires_at - 60000
-  ) {
+  if (Date.now() < auth.expires_at-60000) {
     return auth.access_token;
   }
 
   if (!auth.refresh_token) {
-
-    throw new Error(
-      "Sessão expirada. Conecte novamente."
-    );
-
+    throw new Error("Sessão expirada. Conecte novamente.");
   }
 
-  const refreshed = await requestToken({
-    client_id: CLIENT_ID,
-    grant_type: "refresh_token",
-    refresh_token: auth.refresh_token
+  const refreshed = await tokenRequest({
+    client_id:CLIENT_ID,
+    grant_type:"refresh_token",
+    refresh_token:auth.refresh_token
   });
 
   saveAuth({
     ...auth,
     ...refreshed,
     refresh_token:
-      refreshed.refresh_token ||
-      auth.refresh_token,
-    expires_at:
-      Date.now() + refreshed.expires_in * 1000
+      refreshed.refresh_token || auth.refresh_token,
+    expires_at:Date.now()+refreshed.expires_in*1000
   });
 
   return auth.access_token;
-
 }
 
-/* ========================================
-   CONSULTAS À API
-======================================== */
-
 async function spotifyAPI(endpoint) {
-
-  const token = await getValidToken();
+  const token = await validToken();
 
   const response = await fetch(
-    "https://api.spotify.com/v1/" + endpoint,
+    "https://api.spotify.com/v1/"+endpoint,
     {
-      headers: {
-        Authorization: "Bearer " + token
+      headers:{
+        Authorization:"Bearer "+token
       }
     }
   );
 
   if (!response.ok) {
-
     let data = {};
 
     try {
@@ -1167,109 +893,895 @@ async function spotifyAPI(endpoint) {
 
     throw new Error(
       data.error?.message ||
-      "Erro HTTP " + response.status
+      "Erro HTTP "+response.status
     );
-
   }
 
   return response.json();
+}
 
+function disconnectSpotify() {
+  spotifyRequestId++;
+  saveAuth(null);
+
+  sessionStorage.removeItem(CACHE_KEY);
+
+  spotifyArtists = [];
+  spotifySongs = [];
+
+  source = "history";
+  currentPage = "home";
+
+  notify("Spotify desconectado.");
+  render();
+}
+
+/* ======================================
+   CACHE DA API
+====================================== */
+
+function readCache() {
+  try {
+    return JSON.parse(
+      sessionStorage.getItem(CACHE_KEY) || "{}"
+    );
+  } catch {
+    return {};
+  }
+}
+
+function cachedRange(selectedRange) {
+  const cache = readCache();
+  const entry = cache[selectedRange];
+
+  if (!entry) return null;
+
+  if (Date.now()-entry.savedAt > CACHE_DURATION) {
+    return null;
+  }
+
+  return entry;
+}
+
+function saveCache(selectedRange,artists,songs) {
+  const cache = readCache();
+
+  cache[selectedRange] = {
+    savedAt:Date.now(),
+    artists,
+    songs
+  };
+
+  try {
+    sessionStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify(cache)
+    );
+  } catch {
+    // O aplicativo continua funcionando sem cache.
+  }
 }
 
 async function loadSpotifyData() {
-
   if (!auth) return;
 
-  $("content").innerHTML =
-    '<div class="empty">Carregando seus dados do Spotify...</div>';
+  const requestedRange = range;
+  const requestId = ++spotifyRequestId;
+
+  const cached = cachedRange(requestedRange);
+
+  if (cached) {
+    spotifyArtists = cached.artists;
+    spotifySongs = cached.songs;
+    loadingSpotify = false;
+    render();
+    return;
+  }
+
+  loadingSpotify = true;
+  render();
 
   try {
+    const [artists,songs] = await Promise.all([
+      spotifyAPI(
+        "me/top/artists?time_range="+
+        requestedRange+"&limit=50"
+      ),
+      spotifyAPI(
+        "me/top/tracks?time_range="+
+        requestedRange+"&limit=50"
+      )
+    ]);
 
-    const [artists, songs] =
-      await Promise.all([
-        spotifyAPI(
-          "me/top/artists?time_range=" +
-          range + "&limit=50"
-        ),
-        spotifyAPI(
-          "me/top/tracks?time_range=" +
-          range + "&limit=50"
-        )
-      ]);
+    if (requestId !== spotifyRequestId) return;
 
     spotifyArtists = artists.items || [];
     spotifySongs = songs.items || [];
 
-    notify(
-      "Dados reais do Spotify carregados. " +
-      "Os rankings não incluem minutos exatos."
+    saveCache(
+      requestedRange,
+      spotifyArtists,
+      spotifySongs
     );
 
-  } catch (error) {
+  } catch(error) {
+    if (requestId !== spotifyRequestId) return;
 
     spotifyArtists = [];
     spotifySongs = [];
 
     notify(
-      "Não foi possível carregar os rankings: " +
-      error.message +
-      ". Verifique as permissões e o acesso à API.",
+      "Não foi possível carregar os rankings: "+
+      error.message,
       true
     );
+  } finally {
+    if (requestId === spotifyRequestId) {
+      loadingSpotify = false;
+      render();
+    }
+  }
+}
 
+/* ======================================
+   BANCO DE DADOS LOCAL
+====================================== */
+
+function openDatabase() {
+  return new Promise((resolve,reject) => {
+    const request = indexedDB.open(
+      DB_NAME,
+      DB_VERSION
+    );
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME,{
+          keyPath:"id"
+        });
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function saveHistory(records) {
+  const db = await openDatabase();
+
+  return new Promise((resolve,reject) => {
+    const tx = db.transaction(
+      STORE_NAME,
+      "readwrite"
+    );
+
+    const store = tx.objectStore(STORE_NAME);
+
+    for (const record of records) {
+      store.put(record);
+    }
+
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
+}
+
+async function loadHistory() {
+  const db = await openDatabase();
+
+  return new Promise((resolve,reject) => {
+    const tx = db.transaction(
+      STORE_NAME,
+      "readonly"
+    );
+
+    const request =
+      tx.objectStore(STORE_NAME).getAll();
+
+    request.onsuccess = () => {
+      listeningHistory = request.result || [];
+      db.close();
+      resolve();
+    };
+
+    request.onerror = () => {
+      db.close();
+      reject(request.error);
+    };
+  });
+}
+
+async function clearHistory() {
+  if (!confirm(
+    "Apagar todo o histórico importado deste navegador?"
+  )) return;
+
+  const db = await openDatabase();
+
+  await new Promise((resolve,reject) => {
+    const tx = db.transaction(
+      STORE_NAME,
+      "readwrite"
+    );
+
+    tx.objectStore(STORE_NAME).clear();
+
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+
+  db.close();
+
+  listeningHistory = [];
+
+  notify("Histórico local apagado.");
+  render();
+}
+
+/* ======================================
+   IMPORTAÇÃO JSON
+====================================== */
+
+function normalizeRecord(item) {
+  const dateText = item.ts || item.endTime;
+
+  if (!dateText) return null;
+
+  let date;
+
+  if (item.ts) {
+    date = new Date(item.ts);
+  } else {
+    // O formato antigo utiliza UTC sem indicador de fuso.
+    date = new Date(item.endTime.replace(" ","T")+"Z");
   }
 
-  render();
+  if (isNaN(date.getTime())) return null;
 
+  const artist =
+    item.master_metadata_album_artist_name ||
+    item.artistName ||
+    "";
+
+  const track =
+    item.master_metadata_track_name ||
+    item.trackName ||
+    "";
+
+  const album =
+    item.master_metadata_album_album_name ||
+    "";
+
+  const ms = Number(
+    item.ms_played ?? item.msPlayed ?? 0
+  );
+
+  if (!artist || !track) return null;
+  if (!Number.isFinite(ms) || ms <= 0) return null;
+
+  const timestamp = date.toISOString();
+
+  const uri =
+    item.spotify_track_uri || "";
+
+  const id = [
+    timestamp,
+    uri || artist+"|"+track,
+    ms
+  ].join("|");
+
+  return {
+    id,
+    timestamp,
+    month:timestamp.slice(0,7),
+    artist,
+    track,
+    album,
+    ms,
+    uri
+  };
 }
 
-function disconnectSpotify() {
+async function importHistory(event) {
+  const files = Array.from(event.target.files || []);
 
-  saveAuth(null);
+  if (!files.length) return;
 
-  spotifyArtists = [];
-  spotifySongs = [];
+  notify("Lendo arquivos JSON...");
 
-  source = "demo";
+  let records = [];
+  let invalidFiles = [];
 
-  dismissedNotices.clear();
+  try {
+    for (const file of files) {
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
 
-  notify("Spotify desconectado deste navegador.");
+        if (!Array.isArray(parsed)) {
+          invalidFiles.push(file.name);
+          continue;
+        }
 
-  render();
+        for (const item of parsed) {
+          const record = normalizeRecord(item);
 
+          if (record) records.push(record);
+        }
+
+      } catch {
+        invalidFiles.push(file.name);
+      }
+    }
+
+    if (!records.length) {
+      notify(
+        "Nenhuma reprodução válida encontrada. "+
+        "Confira se os arquivos são do histórico de reprodução do Spotify.",
+        true
+      );
+      return;
+    }
+
+    // Remove registros repetidos do mesmo lote.
+    const unique = new Map();
+
+    for (const record of records) {
+      unique.set(record.id,record);
+    }
+
+    await saveHistory([...unique.values()]);
+    await loadHistory();
+
+    const available = availableMonths();
+
+    if (available.length) {
+      selectedMonth = available[available.length-1];
+      historyYear = Number(selectedMonth.slice(0,4));
+    }
+
+    source = "history";
+    currentPage = "home";
+    currentTab = "overview";
+
+    notify(
+      number(unique.size)+
+      " registros processados. "+
+      (invalidFiles.length
+        ? invalidFiles.length+" arquivo(s) não reconhecido(s)."
+        : "Importação concluída!")
+    );
+
+    render();
+
+  } catch(error) {
+    notify(
+      "Erro ao importar histórico: "+error.message,
+      true
+    );
+  } finally {
+    event.target.value = "";
+  }
 }
 
-/* ========================================
+/* ======================================
+   ESTATÍSTICAS
+====================================== */
+
+function availableMonths() {
+  return [...new Set(
+    listeningHistory.map(r => r.month)
+  )].sort();
+}
+
+function hasRealHistory() {
+  return listeningHistory.length > 0;
+}
+
+function aggregate(records) {
+  const artists = new Map();
+  const songs = new Map();
+
+  let totalMs = 0;
+  let plays = 0;
+
+  for (const record of records) {
+    totalMs += record.ms;
+    plays++;
+
+    const artistKey = record.artist;
+
+    if (!artists.has(artistKey)) {
+      artists.set(artistKey,{
+        name:record.artist,
+        ms:0,
+        plays:0
+      });
+    }
+
+    const a = artists.get(artistKey);
+    a.ms += record.ms;
+    a.plays++;
+
+    const songKey =
+      record.uri ||
+      record.artist+"\u0000"+record.track;
+
+    if (!songs.has(songKey)) {
+      songs.set(songKey,{
+        name:record.track,
+        artist:record.artist,
+        ms:0,
+        plays:0
+      });
+    }
+
+    const s = songs.get(songKey);
+    s.ms += record.ms;
+    s.plays++;
+  }
+
+  return {
+    totalMs,
+    plays,
+    artists:[...artists.values()]
+      .sort((a,b)=>b.ms-a.ms),
+    songs:[...songs.values()]
+      .sort((a,b)=>b.plays-a.plays)
+  };
+}
+
+function monthlyStats() {
+  return aggregate(
+    listeningHistory.filter(
+      r => r.month === selectedMonth
+    )
+  );
+}
+
+function allStats() {
+  return aggregate(listeningHistory);
+}
+
+/* ======================================
+   RANKINGS VISUAIS
+====================================== */
+
+function rankList(items,type,mode) {
+  if (!items.length) {
+    return `<p class="empty">
+      Nenhum dado disponível.
+    </p>`;
+  }
+
+  return items.slice(0,50).map((item,index) => {
+    const isArtist = type === "artist";
+
+    const image = mode === "spotify"
+      ? safeImage(
+          isArtist
+            ? item.images?.[0]?.url
+            : item.album?.images?.[0]?.url
+        )
+      : "";
+
+    const icon = image
+      ? `<img src="${image}" alt="">`
+      : (isArtist?"🎤":"🎵");
+
+    let detail = "";
+
+    if (mode === "spotify") {
+      detail = isArtist
+        ? rangeLabel()
+        : item.artists?.map(a=>a.name).join(", ");
+    } else {
+      detail = isArtist
+        ? number(minutes(item.ms))+" minutos"
+        : escapeHTML(item.artist)+" · "+
+          number(item.plays)+" reproduções";
+    }
+
+    return `
+      <div class="rank-item">
+        <div class="rank-number">${index+1}</div>
+
+        <div class="rank-icon ${isArtist?"":"square"}">
+          ${icon}
+        </div>
+
+        <div class="rank-info">
+          <strong>${escapeHTML(item.name)}</strong>
+          <small>${escapeHTML(detail)}</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function favoriteCard(item,type,mode) {
+  const artist = type === "artist";
+
+  const image = mode === "spotify"
+    ? safeImage(
+        artist
+          ? item?.images?.[0]?.url
+          : item?.album?.images?.[0]?.url
+      )
+    : "";
+
+  const visual = image
+    ? `<img
+         class="favorite-image ${artist?"artist":""}"
+         src="${image}"
+         alt="">`
+    : `<div class="emoji">${artist?"🎤":"🎵"}</div>`;
+
+  return `
+    <div class="card favorite"
+         onclick="setTab('${artist?"artists":"songs"}')">
+
+      <div class="label">
+        ${artist?"Artista favorito":"Música favorita"}
+      </div>
+
+      ${visual}
+
+      <strong class="${artist?"blue":"yellow"}">
+        ${escapeHTML(item?.name || "Indisponível")}
+      </strong>
+
+    </div>
+  `;
+}
+
+function statsGrid(stats) {
+  return `
+    <div class="stat-grid">
+
+      <div class="stat">
+        <strong>${number(minutes(stats.totalMs))}</strong>
+        <span>Minutos ouvidos</span>
+      </div>
+
+      <div class="stat">
+        <strong>${number(stats.plays)}</strong>
+        <span>Reproduções registradas</span>
+      </div>
+
+      <div class="stat">
+        <strong>${number(stats.artists.length)}</strong>
+        <span>Artistas diferentes</span>
+      </div>
+
+      <div class="stat">
+        <strong>${number(stats.songs.length)}</strong>
+        <span>Músicas diferentes</span>
+      </div>
+
+    </div>
+  `;
+}
+
+/* ======================================
+   VISÃO GERAL SPOTIFY
+====================================== */
+
+function rangeLabel() {
+  return {
+    short_term:"Últimas 4 semanas",
+    medium_term:"Últimos 6 meses",
+    long_term:"Longo prazo"
+  }[range];
+}
+
+function spotifyOverview() {
+  if (loadingSpotify) {
+    return `<div class="empty">
+      Carregando seus rankings do Spotify...
+    </div>`;
+  }
+
+  return `
+    ${noticeHTML(
+      "api_limits",
+      "Os rankings da API não informam minutos "+
+      "ou números exatos de reproduções. "+
+      "Para essas estatísticas, importe seu histórico."
+    )}
+
+    <div class="grid">
+      ${favoriteCard(
+        spotifyArtists[0],"artist","spotify"
+      )}
+
+      ${favoriteCard(
+        spotifySongs[0],"song","spotify"
+      )}
+    </div>
+
+    <h2>Artistas mais ouvidos</h2>
+    <div class="card">
+      ${rankList(spotifyArtists,"artist","spotify")}
+    </div>
+
+    <h2>Músicas mais ouvidas</h2>
+    <div class="card">
+      ${rankList(spotifySongs,"song","spotify")}
+    </div>
+  `;
+}
+
+/* ======================================
+   VISÃO GERAL HISTÓRICO
+====================================== */
+
+function historyOverview() {
+  if (!hasRealHistory()) {
+    return `
+      ${noticeHTML(
+        "demo",
+        "O histórico abaixo é uma demonstração. "+
+        "Importe seus arquivos JSON para visualizar "+
+        "suas estatísticas reais."
+      )}
+
+      <div class="card">
+        <div class="label">Tempo ouvido — demonstração</div>
+        <div class="big-number">
+          ${number(demo.minutes)}
+        </div>
+        <div>minutos em setembro de 2024</div>
+      </div>
+
+      <div class="grid">
+        ${favoriteCard(
+          demo.artists[0],"artist","history"
+        )}
+
+        ${favoriteCard(
+          demo.songs[0],"song","history"
+        )}
+      </div>
+
+      <h2>Artistas — demonstração</h2>
+      <div class="card">
+        ${demo.artists.map((a,i)=>`
+          <div class="rank-item">
+            <div class="rank-number">${i+1}</div>
+            <div class="rank-icon">🎤</div>
+            <div class="rank-info">
+              <strong>${escapeHTML(a.name)}</strong>
+              <small>${number(a.minutes)} minutos</small>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  const stats = monthlyStats();
+
+  if (!stats.plays) {
+    return `<div class="card">
+      <p class="empty">
+        Não há reproduções registradas em
+        ${escapeHTML(monthName(selectedMonth))}.
+      </p>
+    </div>`;
+  }
+
+  return `
+    ${statsGrid(stats)}
+
+    <div class="grid">
+      ${favoriteCard(
+        stats.artists[0],"artist","history"
+      )}
+
+      ${favoriteCard(
+        stats.songs[0],"song","history"
+      )}
+    </div>
+
+    <h2>Artistas mais ouvidos</h2>
+    <div class="card">
+      ${rankList(stats.artists,"artist","history")}
+    </div>
+
+    <h2>Músicas mais reproduzidas</h2>
+    <div class="card">
+      ${rankList(stats.songs,"song","history")}
+    </div>
+  `;
+}
+
+/* ======================================
+   IMPORTAÇÃO / HISTÓRICO
+====================================== */
+
+function importPanel() {
+  return `
+    <div class="upload-box">
+      <strong>📂 Importar histórico do Spotify</strong>
+
+      <p>
+        Selecione um ou vários arquivos JSON do
+        histórico de reprodução.
+        Os dados ficam armazenados neste navegador.
+      </p>
+
+      <button
+        class="upload-btn"
+        onclick="$('historyFiles').click()">
+        Selecionar arquivos JSON
+      </button>
+    </div>
+  `;
+}
+
+function historyPage() {
+  const available = availableMonths();
+
+  return `
+    <h2>Histórico mensal</h2>
+
+    ${importPanel()}
+
+    ${hasRealHistory()
+      ? `<div class="card">
+          <div class="label">Histórico importado</div>
+          <div class="big-number">
+            ${number(listeningHistory.length)}
+          </div>
+          <div>registros armazenados</div>
+
+          <br>
+
+          <button
+            class="danger-btn"
+            onclick="clearHistory()">
+            Apagar histórico local
+          </button>
+        </div>`
+      : `<p class="subtitle">
+          Ainda não há histórico real importado.
+          Setembro de 2024 contém apenas uma demonstração.
+        </p>`
+    }
+
+    <div class="year-row">
+      <button
+        class="arrow"
+        onclick="changeYear(-1)">‹</button>
+
+      <strong>${historyYear}</strong>
+
+      <button
+        class="arrow"
+        onclick="changeYear(1)">›</button>
+    </div>
+
+    <div class="month-grid">
+
+      ${months.map((month,index)=>{
+        const key =
+          historyYear+"-"+String(index+1).padStart(2,"0");
+
+        const real = available.includes(key);
+        const demoMonth =
+          !hasRealHistory() && key==="2024-09";
+
+        return `
+          <button
+            class="month-tile ${real||demoMonth?"available":""}"
+            onclick="selectMonth('${key}')">
+
+            ${month.slice(0,3)}
+
+            <small>
+              ${real
+                ? "Disponível"
+                : demoMonth
+                  ? "Demonstração"
+                  : "Sem dados"}
+            </small>
+          </button>
+        `;
+      }).join("")}
+
+    </div>
+  `;
+}
+
+/* ======================================
+   TODO O PERÍODO
+====================================== */
+
+function allPeriodPage() {
+  if (!hasRealHistory()) {
+    return `
+      <h2>Todo o período ♾️</h2>
+
+      ${importPanel()}
+
+      <div class="card">
+        <p class="empty">
+          Importe seu histórico para visualizar
+          o total de minutos, reproduções,
+          artistas e músicas de todos os anos.
+        </p>
+      </div>
+    `;
+  }
+
+  const stats = allStats();
+
+  const available = availableMonths();
+
+  return `
+    <h2>Todo o período ♾️</h2>
+
+    <p class="subtitle">
+      Dados de ${escapeHTML(monthName(available[0]))}
+      até ${escapeHTML(monthName(available[available.length-1]))}.
+    </p>
+
+    ${statsGrid(stats)}
+
+    <div class="grid">
+      ${favoriteCard(
+        stats.artists[0],"artist","history"
+      )}
+
+      ${favoriteCard(
+        stats.songs[0],"song","history"
+      )}
+    </div>
+
+    <h2>Artistas de todo o período</h2>
+    <div class="card">
+      ${rankList(stats.artists,"artist","history")}
+    </div>
+
+    <h2>Músicas de todo o período</h2>
+    <div class="card">
+      ${rankList(stats.songs,"song","history")}
+    </div>
+  `;
+}
+
+/* ======================================
    NAVEGAÇÃO
-======================================== */
+====================================== */
 
 function setPage(page) {
-
   currentPage = page;
   currentTab = "overview";
 
   render();
 
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function setTab(tab) {
-
   currentTab = tab;
-
   render();
-
 }
 
 function setSource(next) {
-
-  if (next === "spotify" && !auth) {
-
-    notify(
-      "Conecte sua conta Spotify primeiro.",
-      true
-    );
-
+  if (next==="spotify" && !auth) {
+    notify("Conecte sua conta Spotify primeiro.",true);
     return;
   }
 
@@ -1279,521 +1791,131 @@ function setSource(next) {
 
   render();
 
-  if (
-    source === "spotify" &&
-    !spotifyArtists.length &&
-    !spotifySongs.length
-  ) {
+  if (source==="spotify") {
     loadSpotifyData();
   }
-
 }
 
 function setRange(next) {
-
-  if (!auth) return;
-
   range = next;
   currentTab = "overview";
 
+  spotifyArtists = [];
+  spotifySongs = [];
+
   render();
-
   loadSpotifyData();
-
 }
 
 function changeMonth(delta) {
+  const [year,month] =
+    selectedMonth.split("-").map(Number);
 
   const date = new Date(
-    currentYear,
-    currentMonth + delta,
-    1
+    Date.UTC(year,month-1+delta,1)
   );
 
-  currentMonth = date.getMonth();
-  currentYear = date.getFullYear();
+  selectedMonth = date.toISOString().slice(0,7);
+  historyYear = date.getUTCFullYear();
 
   render();
-
 }
 
 function changeYear(delta) {
-
-  currentYear += delta;
-
+  historyYear += delta;
   render();
-
 }
 
-function selectMonth(month) {
+function selectMonth(key) {
+  selectedMonth = key;
+  historyYear = Number(key.slice(0,4));
 
-  currentMonth = month;
+  source = "history";
   currentPage = "home";
   currentTab = "overview";
-  source = "demo";
 
   render();
-
 }
-
-function monthLabel() {
-
-  return months[currentMonth] +
-    " " + currentYear;
-
-}
-
-function rangeLabel() {
-
-  return {
-    short_term: "Últimas 4 semanas",
-    medium_term: "Últimos 6 meses",
-    long_term: "Longo prazo"
-  }[range];
-
-}
-
-/* ========================================
-   RANKINGS
-======================================== */
-
-function renderArtists() {
-
-  const artists =
-    source === "spotify"
-      ? spotifyArtists
-      : demo.artists;
-
-  if (!artists.length) {
-
-    return '<p class="empty">Nenhum artista disponível.</p>';
-
-  }
-
-  return artists.map((artist, index) => {
-
-    const image =
-      source === "spotify"
-        ? safeImage(artist.images?.[0]?.url)
-        : "";
-
-    const icon = image
-      ? `<img src="${image}" alt="">`
-      : "🎤";
-
-    const detail =
-      source === "spotify"
-        ? rangeLabel()
-        : artist.minutes.toLocaleString("pt-BR") +
-          " minutos · demonstração";
-
-    return `
-      <div class="rank-item">
-
-        <div class="rank-number">
-          ${index + 1}
-        </div>
-
-        <div class="rank-icon">
-          ${icon}
-        </div>
-
-        <div class="rank-info">
-          <strong>${escapeHTML(artist.name)}</strong>
-          <small>${escapeHTML(detail)}</small>
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
-
-}
-
-function renderSongs() {
-
-  const songs =
-    source === "spotify"
-      ? spotifySongs
-      : demo.songs;
-
-  if (!songs.length) {
-
-    return '<p class="empty">Nenhuma música disponível.</p>';
-
-  }
-
-  return songs.map((song, index) => {
-
-    const image =
-      source === "spotify"
-        ? safeImage(song.album?.images?.[0]?.url)
-        : "";
-
-    const artist =
-      source === "spotify"
-        ? song.artists?.map(a => a.name).join(", ")
-        : song.artist;
-
-    const icon = image
-      ? `<img src="${image}" alt="">`
-      : "🎵";
-
-    return `
-      <div class="rank-item">
-
-        <div class="rank-number">
-          ${index + 1}
-        </div>
-
-        <div class="rank-icon square">
-          ${icon}
-        </div>
-
-        <div class="rank-info">
-          <strong>${escapeHTML(song.name)}</strong>
-          <small>${escapeHTML(artist)}</small>
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
-
-}
-
-/* ========================================
-   VISÃO GERAL
-======================================== */
-
-function favoriteImage(url, artist = false) {
-
-  const image = safeImage(url);
-
-  if (!image) {
-
-    return `<div class="emoji">${artist ? "🎤" : "🎵"}</div>`;
-
-  }
-
-  return `
-    <img
-      class="favorite-image ${artist ? "artist" : ""}"
-      src="${image}"
-      alt=""
-    >
-  `;
-
-}
-
-function renderOverview() {
-
-  if (source === "spotify") {
-
-    const artist = spotifyArtists[0];
-    const song = spotifySongs[0];
-
-    const artistImage =
-      artist?.images?.[0]?.url;
-
-    const songImage =
-      song?.album?.images?.[0]?.url;
-
-    return `
-      ${noticeHTML(
-        "spotify_limits",
-        "Os rankings do Spotify não incluem minutos ou números exatos de reproduções. Essas informações estarão disponíveis com o histórico estendido."
-      )}
-
-      <div class="grid">
-
-        <div
-          class="card favorite clickable"
-          onclick="setTab('artists')">
-
-          <div class="label">
-            Artista favorito
-          </div>
-
-          ${favoriteImage(artistImage, true)}
-
-          <strong class="blue">
-            ${escapeHTML(artist?.name || "Indisponível")}
-          </strong>
-
-        </div>
-
-        <div
-          class="card favorite clickable"
-          onclick="setTab('songs')">
-
-          <div class="label">
-            Música favorita
-          </div>
-
-          ${favoriteImage(songImage)}
-
-          <strong class="yellow">
-            ${escapeHTML(song?.name || "Indisponível")}
-          </strong>
-
-        </div>
-
-      </div>
-
-      <h2>Artistas mais ouvidos</h2>
-      <div class="card">${renderArtists()}</div>
-
-      <h2>Músicas mais ouvidas</h2>
-      <div class="card">${renderSongs()}</div>
-    `;
-
-  }
-
-  if (
-    currentMonth !== 8 ||
-    currentYear !== 2024
-  ) {
-
-    return `
-      <div class="card">
-
-        <p class="empty">
-          Ainda não temos dados para
-          ${escapeHTML(monthLabel())}.
-
-          Quando você importar seu histórico
-          estendido, sua retrospectiva
-          aparecerá aqui.
-        </p>
-
-      </div>
-    `;
-
-  }
-
-  return `
-    ${noticeHTML(
-      "demo_notice",
-      "Modo demonstração: os números abaixo são ilustrativos."
-    )}
-
-    <div class="card">
-
-      <div class="label">
-        Tempo ouvido
-      </div>
-
-      <div class="big-number">
-        ${demo.minutes.toLocaleString("pt-BR")}
-      </div>
-
-      <div>minutos neste mês</div>
-
-    </div>
-
-    <div class="grid">
-
-      <div
-        class="card favorite clickable"
-        onclick="setTab('artists')">
-
-        <div class="label">
-          Artista favorito
-        </div>
-
-        <div class="emoji">🎤</div>
-
-        <strong class="blue">
-          ${escapeHTML(demo.artists[0].name)}
-        </strong>
-
-      </div>
-
-      <div
-        class="card favorite clickable"
-        onclick="setTab('songs')">
-
-        <div class="label">
-          Música favorita
-        </div>
-
-        <div class="emoji">🎵</div>
-
-        <strong class="yellow">
-          ${escapeHTML(demo.songs[0].name)}
-        </strong>
-
-      </div>
-
-    </div>
-
-    <h2>Seu mês em destaque</h2>
-
-    <div class="card">
-
-      <div class="highlight-grid">
-
-        <div class="highlight-item">
-          <strong>${demo.highlights.songs}</strong>
-          <span>Músicas diferentes</span>
-        </div>
-
-        <div class="highlight-item">
-          <strong>${demo.highlights.artists}</strong>
-          <span>Artistas</span>
-        </div>
-
-        <div class="highlight-item">
-          <strong>${demo.highlights.albums}</strong>
-          <span>Álbuns</span>
-        </div>
-
-        <div class="highlight-item">
-          <strong>${demo.highlights.discoveries}</strong>
-          <span>Descobertas</span>
-        </div>
-
-      </div>
-
-    </div>
-
-    <h2>Artistas mais ouvidos</h2>
-    <div class="card">${renderArtists()}</div>
-
-    <h2>Músicas mais ouvidas</h2>
-    <div class="card">${renderSongs()}</div>
-  `;
-
-}
-
-/* ========================================
-   HISTÓRICO
-======================================== */
-
-function renderHistory() {
-
-  return `
-    <h2>Histórico mensal</h2>
-
-    <p class="subtitle">
-      Selecione um mês para visualizar
-      sua retrospectiva.
-    </p>
-
-    <div class="year-row">
-
-      <button
-        onclick="changeYear(-1)"
-        aria-label="Ano anterior">
-        ‹
-      </button>
-
-      <strong>${currentYear}</strong>
-
-      <button
-        onclick="changeYear(1)"
-        aria-label="Próximo ano">
-        ›
-      </button>
-
-    </div>
-
-    <div class="month-grid">
-
-      ${months.map((month, index) => {
-
-        const isDemo =
-          currentYear === 2024 &&
-          index === 8;
-
-        return `
-          <button
-            class="month-tile ${isDemo ? "demo" : ""}"
-            onclick="selectMonth(${index})">
-
-            ${month.slice(0, 3)}
-
-            <small>
-              ${isDemo ? "Demonstração" : "Sem dados"}
-            </small>
-
-          </button>
-        `;
-
-      }).join("")}
-
-    </div>
-  `;
-
-}
-
-/* ========================================
-   CONTROLES SUPERIORES
-======================================== */
 
 function renderControls() {
-
-  if (currentPage !== "home") {
-    return "";
-  }
+  if (currentPage!=="home") return "";
 
   let html = `
     <div class="mode-switch">
-
       <button
-        class="period-btn ${source === "demo" ? "active" : ""}"
-        onclick="setSource('demo')">
+        class="pill ${source==="history"?"active":""}"
+        onclick="setSource('history')">
         📅 Histórico
       </button>
 
       <button
-        class="period-btn ${source === "spotify" ? "active" : ""}"
+        class="pill ${source==="spotify"?"active":""}"
         onclick="setSource('spotify')">
         🟢 Spotify API
       </button>
-
     </div>
   `;
 
-  if (source === "spotify") {
-
+  if (source==="spotify") {
     html += `
       <div class="mode-switch">
-
         <button
-          class="period-btn ${range === "short_term" ? "active" : ""}"
+          class="pill ${range==="short_term"?"active":""}"
           onclick="setRange('short_term')">
           4 semanas
         </button>
 
         <button
-          class="period-btn ${range === "medium_term" ? "active" : ""}"
+          class="pill ${range==="medium_term"?"active":""}"
           onclick="setRange('medium_term')">
           6 meses
         </button>
 
         <button
-          class="period-btn ${range === "long_term" ? "active" : ""}"
+          class="pill ${range==="long_term"?"active":""}"
           onclick="setRange('long_term')">
           Longo prazo
         </button>
-
       </div>
     `;
-
   }
 
   return html;
-
 }
 
-/* ========================================
-   RENDERIZAÇÃO PRINCIPAL
-======================================== */
+function renderBottomNav() {
+  // A API não possui histórico mensal exato.
+  // Portanto, só mostramos "Início" nesse modo.
+
+  const pages = source==="spotify"
+    ? [
+        ["home","⌂","Início"]
+      ]
+    : [
+        ["home","⌂","Início"],
+        ["history","▦","Histórico"],
+        ["all","∞","Todo o período"]
+      ];
+
+  $("bottomNav").innerHTML = pages.map(
+    ([page,icon,label])=>`
+      <button
+        class="${currentPage===page?"active":""}"
+        onclick="setPage('${page}')">
+
+        <span class="icon">${icon}</span>
+        ${label}
+
+      </button>
+    `
+  ).join("");
+}
+
+/* ======================================
+   RENDERIZAÇÃO
+====================================== */
 
 function render() {
-
   $("connectBtn").classList.toggle(
     "hidden",
     !!auth
@@ -1804,165 +1926,153 @@ function render() {
     !auth
   );
 
-  $("authBar").classList.toggle(
-    "connected",
-    !!auth
-  );
+  $("authStatus").textContent = auth
+    ? "Spotify conectado ✓"
+    : "Modo demonstração";
 
-  $("authStatus").textContent =
-    auth ? "Spotify conectado ✓" : "Modo demonstração";
-
-  document.querySelectorAll(
-    ".bottom-nav button"
-  ).forEach(button => {
-
-    button.classList.toggle(
-      "active",
-      button.dataset.page === currentPage
-    );
-
-  });
-
-  const isHistory = currentPage === "history";
-  const isAll = currentPage === "all";
+  if (source==="spotify" && currentPage!=="home") {
+    currentPage = "home";
+  }
 
   $("controls").innerHTML = renderControls();
 
+  const showMonth =
+    source==="history" &&
+    currentPage==="home";
+
   $("monthSelector").classList.toggle(
     "hidden",
-    isHistory || isAll || source === "spotify"
+    !showMonth
   );
+
+  $("monthTitle").textContent =
+    monthName(selectedMonth);
+
+  const showTabs = currentPage==="home";
 
   $("tabs").classList.toggle(
     "hidden",
-    isHistory || isAll
+    !showTabs
   );
-
-  $("monthTitle").textContent = monthLabel();
 
   document.querySelectorAll(
     "#tabs button"
-  ).forEach((button, index) => {
-
+  ).forEach(button=>{
     button.classList.toggle(
       "active",
-      ["overview", "artists", "songs", "genres"][index]
-        === currentTab
+      button.dataset.tab===currentTab
     );
-
   });
 
+  renderBottomNav();
   renderMessages();
 
-  if (isHistory) {
-
-    $("content").innerHTML = renderHistory();
-
+  if (currentPage==="history") {
+    $("content").innerHTML = historyPage();
     return;
-
   }
 
-  if (isAll) {
+  if (currentPage==="all") {
+    $("content").innerHTML = allPeriodPage();
+    return;
+  }
 
+  if (source==="spotify") {
+    if (currentTab==="overview") {
+      $("content").innerHTML = spotifyOverview();
+    } else if (currentTab==="artists") {
+      $("content").innerHTML = `
+        <h2>Artistas mais ouvidos</h2>
+        <div class="card">
+          ${rankList(spotifyArtists,"artist","spotify")}
+        </div>
+      `;
+    } else {
+      $("content").innerHTML = `
+        <h2>Músicas mais ouvidas</h2>
+        <div class="card">
+          ${rankList(spotifySongs,"song","spotify")}
+        </div>
+      `;
+    }
+
+    return;
+  }
+
+  if (currentTab==="overview") {
+    $("content").innerHTML = historyOverview();
+    return;
+  }
+
+  if (!hasRealHistory()) {
     $("content").innerHTML = `
-      <h2>Todo o período ♾️</h2>
-
       <div class="card">
-
         <p class="empty">
-          Aqui aparecerão suas estatísticas
-          acumuladas desde o início do
-          histórico disponível.
-
-          Estamos aguardando a importação
-          dos arquivos estendidos do Spotify.
+          Importe seu histórico para visualizar
+          rankings mensais reais.
         </p>
-
       </div>
     `;
-
     return;
-
   }
 
-  let html = "";
+  const stats = monthlyStats();
 
-  const demoUnavailable =
-    source === "demo" &&
-    (currentMonth !== 8 || currentYear !== 2024);
-
-  if (
-    currentTab === "overview" ||
-    demoUnavailable
-  ) {
-
-    html += renderOverview();
-
-  } else if (currentTab === "artists") {
-
-    html += `
-      <h2>Artistas mais ouvidos</h2>
-      <div class="card">${renderArtists()}</div>
-    `;
-
-  } else if (currentTab === "songs") {
-
-    html += `
-      <h2>Músicas mais ouvidas</h2>
-      <div class="card">${renderSongs()}</div>
-    `;
-
-  } else {
-
-    html += `
-      <h2>Gêneros musicais</h2>
-
+  if (currentTab==="artists") {
+    $("content").innerHTML = `
+      <h2>Artistas — ${escapeHTML(monthName(selectedMonth))}</h2>
       <div class="card">
-        <p class="empty">
-          Os gêneros serão calculados
-          quando tivermos dados suficientes.
-        </p>
+        ${rankList(stats.artists,"artist","history")}
       </div>
     `;
-
+  } else {
+    $("content").innerHTML = `
+      <h2>Músicas — ${escapeHTML(monthName(selectedMonth))}</h2>
+      <div class="card">
+        ${rankList(stats.songs,"song","history")}
+      </div>
+    `;
   }
-
-  $("content").innerHTML = html;
-
 }
 
-/* ========================================
+/* ======================================
    INICIALIZAÇÃO
-======================================== */
+====================================== */
 
 async function initialize() {
+  render();
+
+  try {
+    await loadHistory();
+
+    const available = availableMonths();
+
+    if (available.length) {
+      selectedMonth = available[available.length-1];
+      historyYear = Number(selectedMonth.slice(0,4));
+    }
+
+  } catch(error) {
+    notify(
+      "Não foi possível abrir o histórico local: "+
+      error.message,
+      true
+    );
+  }
+
+  await handleCallback();
 
   render();
 
-  await handleSpotifyCallback();
-
   if (auth) {
-
     source = "spotify";
-
     render();
-
-    if (
-      !spotifyArtists.length &&
-      !spotifySongs.length
-    ) {
-
-      await loadSpotifyData();
-
-    }
-
+    await loadSpotifyData();
   }
-
 }
 
 initialize();
 
 </script>
-
 </body>
 </html>
