@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#121212">
+<title>Sound Capsule+</title>
+
+<style>
+:root {
+  --bg: #121212;
+  --card: #242424;
+  --green: #1ed760;
+  --text: #ffffff;
+  --muted: #b3b3b3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Segoe UI", sans-serif;
+}
+
+header {
+  padding: 25px 20px 10px;
+}
+
+h1 {
+  font-size: 27px;
+  margin: 0 0 6px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 25px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.month-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.month-selector button {
+  background: #333;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 18px;
+}
+
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  background: #292929;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.tabs button.active {
+  background: var(--green);
+  color: black;
+  font-weight: bold;
+}
+
+main {
+  padding: 0 18px 110px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.big-number {
+  font-size: 43px;
+  color: var(--green);
+  font-weight: 800;
+  margin-top: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.favorite {
+  min-height: 170px;
+}
+
+.favorite .emoji {
+  font-size: 43px;
+  margin: 18px 0;
+}
+
+.favorite strong {
+  font-size: 17px;
+}
+
+.blue {
+  color: #8bc5ff;
+}
+
+.yellow {
+  color: #ffe17d;
+}
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.highlight-item {
+  background: #333;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.highlight-item strong {
+  display: block;
+  font-size: 22px;
+  color: var(--green);
+}
+
+.highlight-item span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid #333;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.rank-number {
+  width: 25px;
+  color: var(--muted);
+}
+
+.rank-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: #414141;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.rank-info {
+  flex: 1;
+}
+
+.rank-info strong {
+  display: block;
+  font-size: 14px;
+}
+
+.rank-info small {
+  color: var(--muted);
+}
+
+.rank-value {
+  color: var(--green);
+  font-size: 12px;
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #080808;
+  border-top: 1px solid #333;
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 4px 22px;
+  z-index: 10;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.bottom-nav button.active {
+  color: var(--green);
+}
+
+.bottom-nav .icon {
+  font-size: 23px;
+}
+
+.detail {
+  background: #202020;
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+
+.back {
+  background: #333;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Sound Capsule+ 💚</h1>
+  <div class="subtitle">
+    Sua história musical, mês a mês.
+  </div>
+
+  <div class="month-selector">
+    <button onclick="changeMonth(-1)">‹</button>
+    <strong id="monthTitle">Setembro 2024</strong>
+    <button onclick="changeMonth(1)">›</button>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="active" onclick="setTab('overview',this)">
+      Visão geral
+    </button>
+    <button onclick="setTab('artists',this)">
+      Artistas
+    </button>
+    <button onclick="setTab('songs',this)">
+      Músicas
+    </button>
+    <button onclick="setTab('genres',this)">
+      Gêneros
+    </button>
+  </div>
+</header>
+
+<main id="content"></main>
+
+<nav class="bottom-nav">
+  <button class="active" onclick="setPage('home',this)">
+    <span class="icon">⌂</span>
+    Início
+  </button>
+
+  <button onclick="setPage('stats',this)">
+    <span class="icon">▥</span>
+    Estatísticas
+  </button>
+
+  <button onclick="setPage('history',this)">
+    <span class="icon">▦</span>
+    Histórico
+  </button>
+
+  <button onclick="setPage('all',this)">
+    <span class="icon">∞</span>
+    Todo o período
+  </button>
+</nav>
+
+<script>
+
+const months = [
+  "Janeiro","Fevereiro","Março","Abril",
+  "Maio","Junho","Julho","Agosto",
+  "Setembro","Outubro","Novembro","Dezembro"
+];
+
+let currentMonth = 8;
+let currentYear = 2024;
+let currentTab = "overview";
+let currentPage = "home";
+
+const demo = {
+  minutes: 9974,
+
+  artists: [
+    {
+      name:"Henrique & Juliano",
+      minutes:2431,
+      songs:[
+        ["Arranhão",92],
+        ["A Maior Saudade",78],
+        ["Liberdade Provisória",61],
+        ["Cuida Bem Dela",54],
+        ["Até Você Voltar",42]
+      ]
+    },
+    {
+      name:"Michael Jackson",
+      minutes:1672,
+      songs:[
+        ["Billie Jean",73],
+        ["Beat It",58],
+        ["Thriller",46]
+      ]
+    },
+    {
+      name:"Fred & Gustavo",
+      minutes:1098,
+      songs:[
+        ["Bonde dos Solteiros",42]
+      ]
+    },
+    {
+      name:"Jorge & Mateus",
+      minutes:856,
+      songs:[
+        ["Sosseguei",38]
+      ]
+    },
+    {
+      name:"Bruno & Marrone",
+      minutes:724,
+      songs:[
+        ["Dormi na Praça",31]
+      ]
+    }
+  ],
+
+  songs:[
+    ["Ainda Gosto de Você","Sorriso Maroto",127],
+    ["Arranhão","Henrique & Juliano",92],
+    ["A Maior Saudade","Henrique & Juliano",78],
+    ["Billie Jean","Michael Jackson",73],
+    ["Liberdade Provisória","Henrique & Juliano",61]
+  ],
+
+  highlights:{
+    songs:1432,
+    artists:183,
+    albums:312,
+    discoveries:27
+  }
+};
+
+function monthLabel(){
+  return months[currentMonth]+" "+currentYear;
+}
+
+function updateMonth(){
+  document.getElementById("monthTitle").textContent =
+    currentPage==="all" ? "Todo o período" : monthLabel();
+}
+
+function changeMonth(direction){
+  if(currentPage==="all") return;
+
+  currentMonth+=direction;
+
+  if(currentMonth<0){
+    currentMonth=11;
+    currentYear--;
+  }
+
+  if(currentMonth>11){
+    currentMonth=0;
+    currentYear++;
+  }
+
+  updateMonth();
+  render();
+}
+
+function setTab(tab,button){
+  currentTab=tab;
+
+  document.querySelectorAll(".tabs button")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+  render();
+}
+
+function setPage(page,button){
+  currentPage=page;
+
+  document.querySelectorAll(".bottom-nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  currentTab="overview";
+
+  document.querySelectorAll(".tabs button")
+    .forEach((b,i)=>b.classList.toggle("active",i===0));
+
+  updateMonth();
+  render();
+}
+
+function rankArtists(){
+  return demo.artists.map((artist,index)=>`
+    <div class="rank-item" onclick="artistDetail(${index})">
+      <div class="rank-number">${index+1}</div>
+      <div class="rank-icon">🎤</div>
+      <div class="rank-info">
+        <strong>${artist.name}</strong>
+        <small>${artist.minutes} minutos</small>
+      </div>
+      <div class="rank-value">›</div>
+    </div>
+  `).join("");
+}
+
+function rankSongs(){
+  return demo.songs.map((song,index)=>`
+    <div class="rank-item">
+      <div class="rank-number">${index+1}</div>
+      <div class="rank-icon">🎵</div>
+      <div class="rank-info">
+        <strong>${song[0]}</strong>
+        <small>${song[1]}</small>
+      </div>
+      <div class="rank-value">${song[2]} plays</div>
+    </div>
+  `).join("");
+}
+
+function overview(){
+  return `
+    <div class="card" onclick="minutesDetail()">
+      <div class="label">Tempo ouvido</div>
+      <div class="big-number">
+        ${demo.minutes.toLocaleString("pt-BR")}
+      </div>
+      <div>minutos neste mês</div>
+    </div>
+
+    <div class="grid">
+      <div class="card favorite" onclick="artistDetail(0)">
+        <div class="label">Artista favorito</div>
+        <div class="emoji">🎤</div>
+        <strong class="blue">
+          ${demo.artists[0].name}
+        </strong>
+      </div>
+
+      <div class="card favorite" onclick="setTabByName('songs')">
+        <div class="label">Música favorita</div>
+        <div class="emoji">🎵</div>
+        <strong class="yellow">
+          ${demo.songs[0][0]}
+        </strong>
+      </div>
+    </div>
+
+    <h2>Seu mês em destaque</h2>
+
+    <div class="card">
+      <div class="highlight-grid">
+        <div class="highlight-item">
+          <strong>${demo.highlights.songs}</strong>
+          <span>Músicas diferentes</span>
+        </div>
+        <div class="highlight-item">
+          <strong>${demo.highlights.artists}</strong>
+          <span>Artistas</span>
+        </div>
+        <div class="highlight-item">
+          <strong>${demo.highlights.albums}</strong>
+          <span>Álbuns</span>
+        </div>
+        <div class="highlight-item">
+          <strong>${demo.highlights.discoveries}</strong>
+          <span>Descobertas</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Artistas mais ouvidos</h2>
+    <div class="card">${rankArtists()}</div>
+
+    <h2>Músicas mais ouvidas</h2>
+    <div class="card">${rankSongs()}</div>
+  `;
+}
+
+function artistDetail(index){
+  const artist=demo.artists[index];
+
+  document.getElementById("content").innerHTML=`
+    <button class="back" onclick="render()">← Voltar</button>
+
+    <div class="detail">
+      <h1>${artist.name}</h1>
+      <p class="subtitle">Artista #${index+1}</p>
+
+      <div class="big-number">${artist.minutes}</div>
+      <p>minutos ouvidos</p>
+
+      <h2>Músicas mais ouvidas deste artista</h2>
+
+      ${artist.songs.map((song,i)=>`
+        <div class="rank-item">
+          <div class="rank-number">${i+1}</div>
+          <div class="rank-info">
+            <strong>${song[0]}</strong>
+            <small>${song[1]} reproduções</small>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function minutesDetail(){
+  document.getElementById("content").innerHTML=`
+    <button class="back" onclick="render()">← Voltar</button>
+
+    <div class="detail">
+      <h2>Tempo ouvido</h2>
+
+      <div class="big-number">${demo.minutes}</div>
+      <p>minutos</p>
+
+      <h2>Média diária</h2>
+      <p>332 minutos por dia</p>
+
+      <p class="subtitle">
+        Gráficos detalhados serão adicionados
+        nas próximas versões.
+      </p>
+    </div>
+  `;
+}
+
+function setTabByName(tab){
+  currentTab=tab;
+
+  document.querySelectorAll(".tabs button")
+    .forEach((b,i)=>{
+      b.classList.toggle(
+        "active",
+        ["overview","artists","songs","genres"][i]===tab
+      );
+    });
+
+  render();
+}
+
+function render(){
+  const content=document.getElementById("content");
+
+  if(currentPage==="history"){
+    content.innerHTML=`
+      <h2>Histórico mensal</h2>
+      <div class="card">
+        <p>Selecione um mês pelas setas superiores.</p>
+        <p class="subtitle">
+          Seu histórico completo aparecerá aqui
+          após a importação dos dados.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  if(currentPage==="stats"){
+    content.innerHTML=`
+      <h2>Estatísticas detalhadas</h2>
+      <div class="card">
+        <p>Explore os rankings pelas abas superiores.</p>
+      </div>
+      ${currentTab==="artists" ? rankArtists() : ""}
+      ${currentTab==="songs" ? rankSongs() : ""}
+    `;
+    return;
+  }
+
+  if(currentTab==="overview"){
+    content.innerHTML=overview();
+  }
+
+  if(currentTab==="artists"){
+    content.innerHTML=`
+      <h2>Artistas mais ouvidos</h2>
+      <div class="card">${rankArtists()}</div>
+
+      <h2>Músicas do artista #1</h2>
+      <div class="card">
+        ${demo.artists[0].songs.map((song,i)=>`
+          <div class="rank-item">
+            <div class="rank-number">${i+1}</div>
+            <div class="rank-info">
+              <strong>${song[0]}</strong>
+              <small>${song[1]} reproduções</small>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  if(currentTab==="songs"){
+    content.innerHTML=`
+      <h2>Músicas mais ouvidas</h2>
+      <div class="card">${rankSongs()}</div>
+    `;
+  }
+
+  if(currentTab==="genres"){
+    content.innerHTML=`
+      <h2>Gêneros musicais</h2>
+      <div class="card">
+        <p class="empty">
+          Os gêneros serão calculados quando
+          importarmos seu histórico.
+        </p>
+      </div>
+    `;
+  }
+}
+
+updateMonth();
+render();
+
+</script>
+
+</body>
+</html>
