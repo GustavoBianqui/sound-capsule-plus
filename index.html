@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#121212">
+
 <title>Sound Capsule+</title>
 
 <style>
@@ -23,12 +25,18 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont,
-               "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
 }
 
 header {
   padding: 25px 20px 10px;
+  max-width: 740px;
+  margin: auto;
 }
 
 h1 {
@@ -38,56 +46,93 @@ h1 {
 
 h2 {
   font-size: 20px;
-  margin-top: 25px;
+  margin: 25px 0 12px;
 }
 
 .subtitle {
   color: var(--muted);
   font-size: 13px;
+  line-height: 1.5;
+}
+
+main {
+  padding: 0 18px 120px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.auth-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.spotify-btn {
+  background: var(--green);
+  color: #000;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 30px;
+  font-weight: 700;
+}
+
+.secondary-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 11px 16px;
+  border-radius: 30px;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .month-selector {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 20px 0;
+  margin: 25px 0;
 }
 
 .month-selector button {
   background: #333;
-  border: none;
   color: white;
-  padding: 10px 16px;
-  border-radius: 20px;
+  border: none;
+  padding: 10px 17px;
+  border-radius: 30px;
+}
+
+.month-selector strong {
   font-size: 18px;
 }
 
 .tabs {
   display: flex;
-  overflow-x: auto;
   gap: 10px;
+  overflow-x: auto;
   margin-bottom: 20px;
+  scrollbar-width: none;
 }
 
-.tabs button {
+.tabs button,
+.period-btn {
   background: #292929;
-  border: none;
   color: white;
-  padding: 10px 15px;
-  border-radius: 20px;
+  border: none;
+  padding: 11px 15px;
+  border-radius: 30px;
   white-space: nowrap;
 }
 
-.tabs button.active {
+.tabs button.active,
+.period-btn.active {
   background: var(--green);
   color: black;
   font-weight: bold;
-}
-
-main {
-  padding: 0 18px 110px;
-  max-width: 700px;
-  margin: auto;
 }
 
 .card {
@@ -95,6 +140,9 @@ main {
   border-radius: 18px;
   padding: 20px;
   margin-bottom: 15px;
+}
+
+.clickable {
   cursor: pointer;
 }
 
@@ -106,8 +154,8 @@ main {
 }
 
 .big-number {
-  font-size: 43px;
   color: var(--green);
+  font-size: 43px;
   font-weight: 800;
   margin-top: 10px;
 }
@@ -123,7 +171,7 @@ main {
 }
 
 .favorite .emoji {
-  font-size: 43px;
+  font-size: 42px;
   margin: 18px 0;
 }
 
@@ -154,42 +202,54 @@ main {
 
 .highlight-item strong {
   display: block;
-  font-size: 22px;
   color: var(--green);
+  font-size: 22px;
 }
 
 .highlight-item span {
-  font-size: 12px;
   color: var(--muted);
+  font-size: 12px;
 }
 
 .rank-item {
   display: flex;
   align-items: center;
+  gap: 12px;
   padding: 13px 0;
   border-bottom: 1px solid #333;
-  gap: 12px;
-  cursor: pointer;
+}
+
+.rank-item:last-child {
+  border-bottom: none;
 }
 
 .rank-number {
   width: 25px;
   color: var(--muted);
+  flex-shrink: 0;
 }
 
 .rank-icon {
-  width: 43px;
-  height: 43px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: #414141;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.rank-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .rank-info {
   flex: 1;
+  min-width: 0;
 }
 
 .rank-info strong {
@@ -199,10 +259,6 @@ main {
 
 .rank-info small {
   color: var(--muted);
-}
-
-.rank-value {
-  color: var(--green);
   font-size: 12px;
 }
 
@@ -214,7 +270,7 @@ main {
   border-top: 1px solid #333;
   display: flex;
   justify-content: space-around;
-  padding: 12px 4px 22px;
+  padding: 12px 4px max(18px, env(safe-area-inset-bottom));
   z-index: 10;
 }
 
@@ -227,6 +283,7 @@ main {
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  flex: 1;
 }
 
 .bottom-nav button.active {
@@ -237,441 +294,1300 @@ main {
   font-size: 23px;
 }
 
-.detail {
-  background: #202020;
-  padding: 20px;
-  border-radius: 18px;
-  margin-bottom: 20px;
+.notice {
+  background: #19251e;
+  border: 1px solid #35503e;
+  border-radius: 13px;
+  padding: 15px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.back {
-  background: #333;
-  border: none;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 20px;
-  margin-bottom: 20px;
+.notice.error {
+  background: #301d1d;
+  border-color: #784343;
+  color: #ffd4d4;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  margin-bottom: 15px;
 }
 
 .empty {
   color: var(--muted);
   text-align: center;
-  padding: 30px;
+  padding: 25px 8px;
+  line-height: 1.6;
 }
 
+.year-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 25px 0;
+}
+
+.year-row button {
+  background: #333;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.month-tile {
+  background: #292929;
+  color: white;
+  border: 1px solid #424242;
+  border-radius: 13px;
+  padding: 18px 5px;
+}
+
+.month-tile small {
+  display: block;
+  color: #aaa;
+  font-size: 10px;
+  margin-top: 8px;
+}
+
+.month-tile.demo {
+  border-color: var(--green);
+}
+
+.back-btn {
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 18px;
+  margin-bottom: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Sound Capsule+ 💚</h1>
-  <div class="subtitle">
-    Sua história musical, mês a mês.
-  </div>
 
-  <div class="month-selector">
-    <button onclick="changeMonth(-1)">‹</button>
-    <strong id="monthTitle">Setembro 2024</strong>
-    <button onclick="changeMonth(1)">›</button>
-  </div>
+<h1>Sound Capsule+ 💚</h1>
+<div class="subtitle">
+Sua história musical, mês a mês.
+</div>
 
-  <div class="tabs" id="tabs">
-    <button class="active" onclick="setTab('overview',this)">
-      Visão geral
-    </button>
-    <button onclick="setTab('artists',this)">
-      Artistas
-    </button>
-    <button onclick="setTab('songs',this)">
-      Músicas
-    </button>
-    <button onclick="setTab('genres',this)">
-      Gêneros
-    </button>
-  </div>
+<div class="auth-bar">
+
+<button
+  class="spotify-btn"
+  id="connectBtn"
+  onclick="connectSpotify()">
+  Conectar com Spotify
+</button>
+
+<button
+  class="secondary-btn hidden"
+  id="disconnectBtn"
+  onclick="disconnectSpotify()">
+  Desconectar
+</button>
+
+<span class="status" id="authStatus">
+Modo demonstração
+</span>
+
+</div>
+
+<div class="month-selector" id="monthSelector">
+
+<button onclick="changeMonth(-1)">‹</button>
+
+<strong id="monthTitle">
+Setembro 2024
+</strong>
+
+<button onclick="changeMonth(1)">›</button>
+
+</div>
+
+<div class="tabs" id="tabs">
+
+<button class="active" onclick="setTab('overview')">
+Visão geral
+</button>
+
+<button onclick="setTab('artists')">
+Artistas
+</button>
+
+<button onclick="setTab('songs')">
+Músicas
+</button>
+
+<button onclick="setTab('genres')">
+Gêneros
+</button>
+
+</div>
+
 </header>
 
-<main id="content"></main>
+<main>
+
+<div id="messages"></div>
+
+<div id="content"></div>
+
+</main>
 
 <nav class="bottom-nav">
-  <button class="active" onclick="setPage('home',this)">
-    <span class="icon">⌂</span>
-    Início
-  </button>
 
-  <button onclick="setPage('stats',this)">
-    <span class="icon">▥</span>
-    Estatísticas
-  </button>
+<button
+  class="active"
+  data-page="home"
+  onclick="setPage('home')">
 
-  <button onclick="setPage('history',this)">
-    <span class="icon">▦</span>
-    Histórico
-  </button>
+<span class="icon">⌂</span>
+Início
 
-  <button onclick="setPage('all',this)">
-    <span class="icon">∞</span>
-    Todo o período
-  </button>
+</button>
+
+<button
+  data-page="history"
+  onclick="setPage('history')">
+
+<span class="icon">▦</span>
+Histórico
+
+</button>
+
+<button
+  data-page="all"
+  onclick="setPage('all')">
+
+<span class="icon">∞</span>
+Todo o período
+
+</button>
+
 </nav>
 
 <script>
 
+/* ========================================
+   CONFIGURAÇÕES DO SPOTIFY
+======================================== */
+
+const CLIENT_ID =
+"6075f18370344faeb7af4270b39823db";
+
+const REDIRECT_URI =
+"https://gustavobianqui.github.io/sound-capsule-plus/";
+
+const SCOPES =
+"user-top-read user-read-recently-played";
+
+const AUTH_KEY = "sound_capsule_auth";
+
+/* ========================================
+   ESTADO DO APLICATIVO
+======================================== */
+
 const months = [
-  "Janeiro","Fevereiro","Março","Abril",
-  "Maio","Junho","Julho","Agosto",
-  "Setembro","Outubro","Novembro","Dezembro"
+  "Janeiro", "Fevereiro", "Março",
+  "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro",
+  "Outubro", "Novembro", "Dezembro"
 ];
 
 let currentMonth = 8;
 let currentYear = 2024;
-let currentTab = "overview";
+
 let currentPage = "home";
+let currentTab = "overview";
+
+let source = "demo";
+let range = "short_term";
+
+let spotifyArtists = [];
+let spotifySongs = [];
+
+let auth = loadAuth();
+
+/* ========================================
+   DADOS DEMONSTRATIVOS
+======================================== */
 
 const demo = {
   minutes: 9974,
 
   artists: [
     {
-      name:"Henrique & Juliano",
-      minutes:2431,
-      songs:[
-        ["Arranhão",92],
-        ["A Maior Saudade",78],
-        ["Liberdade Provisória",61],
-        ["Cuida Bem Dela",54],
-        ["Até Você Voltar",42]
+      name: "Henrique & Juliano",
+      minutes: 2431,
+      songs: [
+        "Arranhão",
+        "A Maior Saudade",
+        "Liberdade Provisória",
+        "Cuida Bem Dela"
       ]
     },
     {
-      name:"Michael Jackson",
-      minutes:1672,
-      songs:[
-        ["Billie Jean",73],
-        ["Beat It",58],
-        ["Thriller",46]
+      name: "Michael Jackson",
+      minutes: 1672,
+      songs: [
+        "Billie Jean",
+        "Beat It",
+        "Thriller"
       ]
     },
     {
-      name:"Fred & Gustavo",
-      minutes:1098,
-      songs:[
-        ["Bonde dos Solteiros",42]
-      ]
+      name: "Fred & Gustavo",
+      minutes: 1098,
+      songs: []
     },
     {
-      name:"Jorge & Mateus",
-      minutes:856,
-      songs:[
-        ["Sosseguei",38]
-      ]
+      name: "Jorge & Mateus",
+      minutes: 856,
+      songs: []
     },
     {
-      name:"Bruno & Marrone",
-      minutes:724,
-      songs:[
-        ["Dormi na Praça",31]
-      ]
+      name: "Bruno & Marrone",
+      minutes: 724,
+      songs: []
     }
   ],
 
-  songs:[
-    ["Ainda Gosto de Você","Sorriso Maroto",127],
-    ["Arranhão","Henrique & Juliano",92],
-    ["A Maior Saudade","Henrique & Juliano",78],
-    ["Billie Jean","Michael Jackson",73],
-    ["Liberdade Provisória","Henrique & Juliano",61]
+  songs: [
+    {
+      name: "Ainda Gosto de Você",
+      artist: "Sorriso Maroto",
+      plays: 127
+    },
+    {
+      name: "Arranhão",
+      artist: "Henrique & Juliano",
+      plays: 92
+    },
+    {
+      name: "A Maior Saudade",
+      artist: "Henrique & Juliano",
+      plays: 78
+    },
+    {
+      name: "Billie Jean",
+      artist: "Michael Jackson",
+      plays: 73
+    }
   ],
 
-  highlights:{
-    songs:1432,
-    artists:183,
-    albums:312,
-    discoveries:27
+  highlights: {
+    songs: 1432,
+    artists: 183,
+    albums: 312,
+    discoveries: 27
   }
 };
 
-function monthLabel(){
-  return months[currentMonth]+" "+currentYear;
+/* ========================================
+   FUNÇÕES AUXILIARES
+======================================== */
+
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[c]
+  );
 }
 
-function updateMonth(){
-  document.getElementById("monthTitle").textContent =
-    currentPage==="all" ? "Todo o período" : monthLabel();
+function notify(message, error = false) {
+  $("messages").innerHTML = message
+    ? `<div class="notice ${error ? "error" : ""}">
+         ${escapeHTML(message)}
+       </div>`
+    : "";
 }
 
-function changeMonth(direction){
-  if(currentPage==="all") return;
+function loadAuth() {
+  try {
+    return JSON.parse(
+      sessionStorage.getItem(AUTH_KEY) || "null"
+    );
+  } catch {
+    return null;
+  }
+}
 
-  currentMonth+=direction;
+function saveAuth(data) {
+  auth = data;
 
-  if(currentMonth<0){
-    currentMonth=11;
-    currentYear--;
+  if (data) {
+    sessionStorage.setItem(
+      AUTH_KEY,
+      JSON.stringify(data)
+    );
+  } else {
+    sessionStorage.removeItem(AUTH_KEY);
+  }
+}
+
+/* ========================================
+   AUTENTICAÇÃO SPOTIFY — PKCE
+======================================== */
+
+function generateVerifier() {
+  const bytes = crypto.getRandomValues(
+    new Uint8Array(64)
+  );
+
+  return Array.from(
+    bytes,
+    b => b.toString(16).padStart(2, "0")
+  ).join("");
+}
+
+async function generateChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    data
+  );
+
+  return btoa(
+    String.fromCharCode(
+      ...new Uint8Array(digest)
+    )
+  )
+  .replace(/\+/g, "-")
+  .replace(/\//g, "_")
+  .replace(/=+$/, "");
+}
+
+async function connectSpotify() {
+
+  try {
+
+    const verifier = generateVerifier();
+    const state = generateVerifier();
+
+    sessionStorage.setItem(
+      "spotify_verifier",
+      verifier
+    );
+
+    sessionStorage.setItem(
+      "spotify_state",
+      state
+    );
+
+    const challenge =
+      await generateChallenge(verifier);
+
+    const params = new URLSearchParams({
+      client_id: CLIENT_ID,
+      response_type: "code",
+      redirect_uri: REDIRECT_URI,
+      scope: SCOPES,
+      code_challenge_method: "S256",
+      code_challenge: challenge,
+      state: state
+    });
+
+    window.location.href =
+      "https://accounts.spotify.com/authorize?" +
+      params.toString();
+
+  } catch (error) {
+
+    notify(
+      "Erro ao iniciar conexão: " + error.message,
+      true
+    );
+
   }
 
-  if(currentMonth>11){
-    currentMonth=0;
-    currentYear++;
+}
+
+async function requestToken(params) {
+
+  const response = await fetch(
+    "https://accounts.spotify.com/api/token",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":
+          "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams(params)
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error_description ||
+      data.error ||
+      "Erro na autenticação"
+    );
   }
 
-  updateMonth();
+  return data;
+}
+
+async function handleSpotifyCallback() {
+
+  const query = new URLSearchParams(
+    window.location.search
+  );
+
+  if (!query.has("code") && !query.has("error")) {
+    return;
+  }
+
+  const code = query.get("code");
+  const returnedState = query.get("state");
+  const error = query.get("error");
+
+  history.replaceState(
+    {},
+    "",
+    window.location.pathname
+  );
+
+  if (error) {
+    notify(
+      "Autorização não concluída: " + error,
+      true
+    );
+    return;
+  }
+
+  const verifier = sessionStorage.getItem(
+    "spotify_verifier"
+  );
+
+  const expectedState = sessionStorage.getItem(
+    "spotify_state"
+  );
+
+  sessionStorage.removeItem("spotify_verifier");
+  sessionStorage.removeItem("spotify_state");
+
+  if (
+    !verifier ||
+    !expectedState ||
+    expectedState !== returnedState
+  ) {
+    notify(
+      "Falha na verificação de segurança. Tente novamente.",
+      true
+    );
+    return;
+  }
+
+  try {
+
+    const token = await requestToken({
+      client_id: CLIENT_ID,
+      grant_type: "authorization_code",
+      code: code,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: verifier
+    });
+
+    saveAuth({
+      ...token,
+      expires_at:
+        Date.now() + token.expires_in * 1000
+    });
+
+    source = "spotify";
+
+    notify("Spotify conectado com sucesso!");
+
+    await loadSpotifyData();
+
+  } catch (error) {
+
+    notify(
+      "Erro ao conectar: " + error.message,
+      true
+    );
+
+  }
+
+}
+
+/* ========================================
+   RENOVAÇÃO DO TOKEN
+======================================== */
+
+async function getValidToken() {
+
+  if (!auth) {
+    throw new Error("Conta não conectada");
+  }
+
+  if (
+    Date.now() <
+    auth.expires_at - 60000
+  ) {
+    return auth.access_token;
+  }
+
+  if (!auth.refresh_token) {
+    throw new Error(
+      "Sessão expirada. Conecte novamente."
+    );
+  }
+
+  const refreshed = await requestToken({
+    client_id: CLIENT_ID,
+    grant_type: "refresh_token",
+    refresh_token: auth.refresh_token
+  });
+
+  saveAuth({
+    ...auth,
+    ...refreshed,
+    refresh_token:
+      refreshed.refresh_token ||
+      auth.refresh_token,
+    expires_at:
+      Date.now() + refreshed.expires_in * 1000
+  });
+
+  return auth.access_token;
+}
+
+/* ========================================
+   CONSULTAS À API
+======================================== */
+
+async function spotifyAPI(endpoint) {
+
+  const token = await getValidToken();
+
+  const response = await fetch(
+    "https://api.spotify.com/v1/" + endpoint,
+    {
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }
+  );
+
+  if (!response.ok) {
+
+    let data = {};
+
+    try {
+      data = await response.json();
+    } catch {}
+
+    throw new Error(
+      data.error?.message ||
+      "Erro HTTP " + response.status
+    );
+
+  }
+
+  return response.json();
+}
+
+async function loadSpotifyData() {
+
+  if (!auth) return;
+
+  $("content").innerHTML =
+    '<div class="empty">Carregando seus dados do Spotify...</div>';
+
+  try {
+
+    const [artists, songs] =
+      await Promise.all([
+        spotifyAPI(
+          "me/top/artists?time_range=" +
+          range + "&limit=50"
+        ),
+        spotifyAPI(
+          "me/top/tracks?time_range=" +
+          range + "&limit=50"
+        )
+      ]);
+
+    spotifyArtists = artists.items || [];
+    spotifySongs = songs.items || [];
+
+    notify(
+      "Dados reais do Spotify carregados. " +
+      "Os rankings não incluem minutos exatos."
+    );
+
+  } catch (error) {
+
+    spotifyArtists = [];
+    spotifySongs = [];
+
+    notify(
+      "Não foi possível carregar os rankings: " +
+      error.message +
+      ". Verifique as permissões e o acesso à API.",
+      true
+    );
+
+  }
+
   render();
 }
 
-function setTab(tab,button){
-  currentTab=tab;
+function disconnectSpotify() {
 
-  document.querySelectorAll(".tabs button")
-    .forEach(b=>b.classList.remove("active"));
+  saveAuth(null);
 
-  button.classList.add("active");
+  spotifyArtists = [];
+  spotifySongs = [];
+
+  source = "demo";
+
+  notify("Spotify desconectado deste navegador.");
+
   render();
 }
 
-function setPage(page,button){
-  currentPage=page;
+/* ========================================
+   NAVEGAÇÃO
+======================================== */
 
-  document.querySelectorAll(".bottom-nav button")
-    .forEach(b=>b.classList.remove("active"));
+function setPage(page) {
 
-  button.classList.add("active");
+  currentPage = page;
+  currentTab = "overview";
 
-  currentTab="overview";
-
-  document.querySelectorAll(".tabs button")
-    .forEach((b,i)=>b.classList.toggle("active",i===0));
-
-  updateMonth();
   render();
 }
 
-function rankArtists(){
-  return demo.artists.map((artist,index)=>`
-    <div class="rank-item" onclick="artistDetail(${index})">
-      <div class="rank-number">${index+1}</div>
-      <div class="rank-icon">🎤</div>
-      <div class="rank-info">
-        <strong>${artist.name}</strong>
-        <small>${artist.minutes} minutos</small>
+function setTab(tab) {
+
+  currentTab = tab;
+
+  render();
+}
+
+function setSource(next) {
+
+  if (next === "spotify" && !auth) {
+    notify(
+      "Conecte sua conta Spotify primeiro.",
+      true
+    );
+    return;
+  }
+
+  source = next;
+  currentPage = "home";
+  currentTab = "overview";
+
+  render();
+
+  if (
+    source === "spotify" &&
+    !spotifyArtists.length
+  ) {
+    loadSpotifyData();
+  }
+}
+
+function setRange(next) {
+
+  range = next;
+  currentTab = "overview";
+
+  loadSpotifyData();
+}
+
+function changeMonth(delta) {
+
+  const date = new Date(
+    currentYear,
+    currentMonth + delta,
+    1
+  );
+
+  currentMonth = date.getMonth();
+  currentYear = date.getFullYear();
+
+  render();
+}
+
+function changeYear(delta) {
+
+  currentYear += delta;
+
+  render();
+}
+
+function selectMonth(month) {
+
+  currentMonth = month;
+  currentPage = "home";
+  currentTab = "overview";
+  source = "demo";
+
+  render();
+}
+
+function monthLabel() {
+
+  return months[currentMonth] +
+    " " + currentYear;
+}
+
+function rangeLabel() {
+
+  return {
+    short_term: "Últimas 4 semanas",
+    medium_term: "Últimos 6 meses",
+    long_term: "Longo prazo"
+  }[range];
+}
+
+/* ========================================
+   RANKINGS
+======================================== */
+
+function renderArtists() {
+
+  const artists =
+    source === "spotify"
+      ? spotifyArtists
+      : demo.artists;
+
+  if (!artists.length) {
+    return '<p class="empty">Nenhum artista disponível.</p>';
+  }
+
+  return artists.map((artist, index) => {
+
+    const image =
+      source === "spotify"
+        ? artist.images?.[0]?.url
+        : null;
+
+    const icon = image
+      ? `<img src="${escapeHTML(image)}" alt="">`
+      : "🎤";
+
+    const detail =
+      source === "spotify"
+        ? rangeLabel()
+        : artist.minutes.toLocaleString("pt-BR") +
+          " minutos · demonstração";
+
+    return `
+      <div class="rank-item">
+
+        <div class="rank-number">
+          ${index + 1}
+        </div>
+
+        <div class="rank-icon">
+          ${icon}
+        </div>
+
+        <div class="rank-info">
+          <strong>${escapeHTML(artist.name)}</strong>
+          <small>${escapeHTML(detail)}</small>
+        </div>
+
       </div>
-      <div class="rank-value">›</div>
-    </div>
-  `).join("");
+    `;
+
+  }).join("");
 }
 
-function rankSongs(){
-  return demo.songs.map((song,index)=>`
-    <div class="rank-item">
-      <div class="rank-number">${index+1}</div>
-      <div class="rank-icon">🎵</div>
-      <div class="rank-info">
-        <strong>${song[0]}</strong>
-        <small>${song[1]}</small>
+function renderSongs() {
+
+  const songs =
+    source === "spotify"
+      ? spotifySongs
+      : demo.songs;
+
+  if (!songs.length) {
+    return '<p class="empty">Nenhuma música disponível.</p>';
+  }
+
+  return songs.map((song, index) => {
+
+    const image =
+      source === "spotify"
+        ? song.album?.images?.[0]?.url
+        : null;
+
+    const name = song.name;
+
+    const artist =
+      source === "spotify"
+        ? song.artists?.map(a => a.name).join(", ")
+        : song.artist;
+
+    const icon = image
+      ? `<img src="${escapeHTML(image)}" alt="">`
+      : "🎵";
+
+    return `
+      <div class="rank-item">
+
+        <div class="rank-number">
+          ${index + 1}
+        </div>
+
+        <div class="rank-icon">
+          ${icon}
+        </div>
+
+        <div class="rank-info">
+          <strong>${escapeHTML(name)}</strong>
+          <small>${escapeHTML(artist)}</small>
+        </div>
+
       </div>
-      <div class="rank-value">${song[2]} plays</div>
-    </div>
-  `).join("");
+    `;
+
+  }).join("");
 }
 
-function overview(){
+/* ========================================
+   VISÃO GERAL
+======================================== */
+
+function renderOverview() {
+
+  if (source === "spotify") {
+
+    const artist = spotifyArtists[0];
+    const song = spotifySongs[0];
+
+    return `
+      <div class="notice">
+        Rankings reais do Spotify:
+        ${rangeLabel()}.
+        A API não fornece aqui os minutos
+        ou as reproduções exatas.
+      </div>
+
+      <div class="grid">
+
+        <div class="card favorite clickable"
+             onclick="setTab('artists')">
+
+          <div class="label">Artista favorito</div>
+          <div class="emoji">🎤</div>
+
+          <strong class="blue">
+            ${escapeHTML(artist?.name || "Indisponível")}
+          </strong>
+
+        </div>
+
+        <div class="card favorite clickable"
+             onclick="setTab('songs')">
+
+          <div class="label">Música favorita</div>
+          <div class="emoji">🎵</div>
+
+          <strong class="yellow">
+            ${escapeHTML(song?.name || "Indisponível")}
+          </strong>
+
+        </div>
+
+      </div>
+
+      <h2>Artistas mais ouvidos</h2>
+      <div class="card">${renderArtists()}</div>
+
+      <h2>Músicas mais ouvidas</h2>
+      <div class="card">${renderSongs()}</div>
+    `;
+  }
+
+  if (
+    currentMonth !== 8 ||
+    currentYear !== 2024
+  ) {
+    return `
+      <div class="card">
+        <p class="empty">
+          Ainda não temos dados para
+          ${monthLabel()}.
+
+          Quando você importar seu histórico
+          estendido, sua retrospectiva
+          aparecerá aqui.
+        </p>
+      </div>
+    `;
+  }
+
   return `
-    <div class="card" onclick="minutesDetail()">
+    <div class="notice">
+      Modo demonstração.
+      Os números abaixo são ilustrativos.
+    </div>
+
+    <div class="card">
+
       <div class="label">Tempo ouvido</div>
+
       <div class="big-number">
         ${demo.minutes.toLocaleString("pt-BR")}
       </div>
+
       <div>minutos neste mês</div>
+
     </div>
 
     <div class="grid">
-      <div class="card favorite" onclick="artistDetail(0)">
+
+      <div class="card favorite clickable"
+           onclick="setTab('artists')">
+
         <div class="label">Artista favorito</div>
         <div class="emoji">🎤</div>
+
         <strong class="blue">
-          ${demo.artists[0].name}
+          ${escapeHTML(demo.artists[0].name)}
         </strong>
+
       </div>
 
-      <div class="card favorite" onclick="setTabByName('songs')">
+      <div class="card favorite clickable"
+           onclick="setTab('songs')">
+
         <div class="label">Música favorita</div>
         <div class="emoji">🎵</div>
+
         <strong class="yellow">
-          ${demo.songs[0][0]}
+          ${escapeHTML(demo.songs[0].name)}
         </strong>
+
       </div>
+
     </div>
 
     <h2>Seu mês em destaque</h2>
 
     <div class="card">
+
       <div class="highlight-grid">
+
         <div class="highlight-item">
           <strong>${demo.highlights.songs}</strong>
           <span>Músicas diferentes</span>
         </div>
+
         <div class="highlight-item">
           <strong>${demo.highlights.artists}</strong>
           <span>Artistas</span>
         </div>
+
         <div class="highlight-item">
           <strong>${demo.highlights.albums}</strong>
           <span>Álbuns</span>
         </div>
+
         <div class="highlight-item">
           <strong>${demo.highlights.discoveries}</strong>
           <span>Descobertas</span>
         </div>
+
       </div>
+
     </div>
 
     <h2>Artistas mais ouvidos</h2>
-    <div class="card">${rankArtists()}</div>
+    <div class="card">${renderArtists()}</div>
 
     <h2>Músicas mais ouvidas</h2>
-    <div class="card">${rankSongs()}</div>
+    <div class="card">${renderSongs()}</div>
   `;
 }
 
-function artistDetail(index){
-  const artist=demo.artists[index];
+/* ========================================
+   HISTÓRICO
+======================================== */
 
-  document.getElementById("content").innerHTML=`
-    <button class="back" onclick="render()">← Voltar</button>
+function renderHistory() {
 
-    <div class="detail">
-      <h1>${artist.name}</h1>
-      <p class="subtitle">Artista #${index+1}</p>
+  return `
+    <h2>Histórico mensal</h2>
 
-      <div class="big-number">${artist.minutes}</div>
-      <p>minutos ouvidos</p>
+    <p class="subtitle">
+      Selecione um mês para visualizar
+      sua retrospectiva.
+    </p>
 
-      <h2>Músicas mais ouvidas deste artista</h2>
+    <div class="year-row">
 
-      ${artist.songs.map((song,i)=>`
-        <div class="rank-item">
-          <div class="rank-number">${i+1}</div>
-          <div class="rank-info">
-            <strong>${song[0]}</strong>
-            <small>${song[1]} reproduções</small>
-          </div>
-        </div>
-      `).join("")}
+      <button onclick="changeYear(-1)">‹</button>
+
+      <strong>${currentYear}</strong>
+
+      <button onclick="changeYear(1)">›</button>
+
+    </div>
+
+    <div class="month-grid">
+
+      ${months.map((month, index) => {
+
+        const isDemo =
+          currentYear === 2024 &&
+          index === 8;
+
+        return `
+          <button
+            class="month-tile ${isDemo ? "demo" : ""}"
+            onclick="selectMonth(${index})">
+
+            ${month.slice(0, 3)}
+
+            <small>
+              ${isDemo ? "Demonstração" : "Sem dados"}
+            </small>
+
+          </button>
+        `;
+
+      }).join("")}
+
     </div>
   `;
 }
 
-function minutesDetail(){
-  document.getElementById("content").innerHTML=`
-    <button class="back" onclick="render()">← Voltar</button>
+/* ========================================
+   RENDERIZAÇÃO PRINCIPAL
+======================================== */
 
-    <div class="detail">
-      <h2>Tempo ouvido</h2>
+function render() {
 
-      <div class="big-number">${demo.minutes}</div>
-      <p>minutos</p>
+  $("connectBtn").classList.toggle(
+    "hidden",
+    !!auth
+  );
 
-      <h2>Média diária</h2>
-      <p>332 minutos por dia</p>
+  $("disconnectBtn").classList.toggle(
+    "hidden",
+    !auth
+  );
 
-      <p class="subtitle">
-        Gráficos detalhados serão adicionados
-        nas próximas versões.
-      </p>
-    </div>
-  `;
-}
+  $("authStatus").textContent =
+    auth ? "Spotify conectado" : "Modo demonstração";
 
-function setTabByName(tab){
-  currentTab=tab;
+  document.querySelectorAll(
+    ".bottom-nav button"
+  ).forEach(button => {
 
-  document.querySelectorAll(".tabs button")
-    .forEach((b,i)=>{
-      b.classList.toggle(
-        "active",
-        ["overview","artists","songs","genres"][i]===tab
-      );
-    });
+    button.classList.toggle(
+      "active",
+      button.dataset.page === currentPage
+    );
 
-  render();
-}
+  });
 
-function render(){
-  const content=document.getElementById("content");
+  const isHistory = currentPage === "history";
+  const isAll = currentPage === "all";
 
-  if(currentPage==="history"){
-    content.innerHTML=`
-      <h2>Histórico mensal</h2>
+  $("monthSelector").classList.toggle(
+    "hidden",
+    isHistory || isAll || source === "spotify"
+  );
+
+  $("tabs").classList.toggle(
+    "hidden",
+    isHistory
+  );
+
+  $("monthTitle").textContent = monthLabel();
+
+  document.querySelectorAll(
+    "#tabs button"
+  ).forEach((button, index) => {
+
+    button.classList.toggle(
+      "active",
+      ["overview", "artists", "songs", "genres"][index]
+        === currentTab
+    );
+
+  });
+
+  if (isHistory) {
+
+    $("content").innerHTML = renderHistory();
+
+    return;
+  }
+
+  if (isAll) {
+
+    $("content").innerHTML = `
+      <h2>Todo o período ♾️</h2>
+
       <div class="card">
-        <p>Selecione um mês pelas setas superiores.</p>
-        <p class="subtitle">
-          Seu histórico completo aparecerá aqui
-          após a importação dos dados.
+
+        <p class="empty">
+          Aqui aparecerão suas estatísticas
+          acumuladas desde o início do
+          histórico disponível.
+
+          Estamos aguardando a importação
+          dos arquivos estendidos do Spotify.
         </p>
+
       </div>
     `;
+
     return;
   }
 
-  if(currentPage==="stats"){
-    content.innerHTML=`
-      <h2>Estatísticas detalhadas</h2>
-      <div class="card">
-        <p>Explore os rankings pelas abas superiores.</p>
+  let html = `
+    <div class="mode-switch">
+
+      <button
+        class="period-btn ${source === "demo" ? "active" : ""}"
+        onclick="setSource('demo')">
+
+        📅 Histórico
+
+      </button>
+
+      <button
+        class="period-btn ${source === "spotify" ? "active" : ""}"
+        onclick="setSource('spotify')">
+
+        🟢 Spotify API
+
+      </button>
+
+    </div>
+  `;
+
+  if (source === "spotify") {
+
+    html += `
+      <div class="mode-switch">
+
+        <button
+          class="period-btn ${range === "short_term" ? "active" : ""}"
+          onclick="setRange('short_term')">
+          4 semanas
+        </button>
+
+        <button
+          class="period-btn ${range === "medium_term" ? "active" : ""}"
+          onclick="setRange('medium_term')">
+          6 meses
+        </button>
+
+        <button
+          class="period-btn ${range === "long_term" ? "active" : ""}"
+          onclick="setRange('long_term')">
+          Longo prazo
+        </button>
+
       </div>
-      ${currentTab==="artists" ? rankArtists() : ""}
-      ${currentTab==="songs" ? rankSongs() : ""}
     `;
-    return;
   }
 
-  if(currentTab==="overview"){
-    content.innerHTML=overview();
-  }
+  const demoUnavailable =
+    source === "demo" &&
+    (currentMonth !== 8 || currentYear !== 2024);
 
-  if(currentTab==="artists"){
-    content.innerHTML=`
+  if (currentTab === "overview" || demoUnavailable) {
+
+    html += renderOverview();
+
+  } else if (currentTab === "artists") {
+
+    html += `
       <h2>Artistas mais ouvidos</h2>
-      <div class="card">${rankArtists()}</div>
-
-      <h2>Músicas do artista #1</h2>
-      <div class="card">
-        ${demo.artists[0].songs.map((song,i)=>`
-          <div class="rank-item">
-            <div class="rank-number">${i+1}</div>
-            <div class="rank-info">
-              <strong>${song[0]}</strong>
-              <small>${song[1]} reproduções</small>
-            </div>
-          </div>
-        `).join("")}
-      </div>
+      <div class="card">${renderArtists()}</div>
     `;
-  }
 
-  if(currentTab==="songs"){
-    content.innerHTML=`
+  } else if (currentTab === "songs") {
+
+    html += `
       <h2>Músicas mais ouvidas</h2>
-      <div class="card">${rankSongs()}</div>
+      <div class="card">${renderSongs()}</div>
     `;
-  }
 
-  if(currentTab==="genres"){
-    content.innerHTML=`
+  } else {
+
+    html += `
       <h2>Gêneros musicais</h2>
+
       <div class="card">
         <p class="empty">
-          Os gêneros serão calculados quando
-          importarmos seu histórico.
+          Os gêneros serão calculados
+          quando tivermos dados suficientes.
         </p>
       </div>
     `;
   }
+
+  $("content").innerHTML = html;
 }
 
-updateMonth();
-render();
+/* ========================================
+   INICIALIZAÇÃO
+======================================== */
+
+async function initialize() {
+
+  render();
+
+  await handleSpotifyCallback();
+
+  if (auth) {
+
+    source = "spotify";
+
+    render();
+
+    if (!spotifyArtists.length) {
+      await loadSpotifyData();
+    }
+
+  }
+}
+
+initialize();
 
 </script>
 
