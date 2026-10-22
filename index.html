@@ -43,7 +43,6 @@ header,main {
 }
 
 header { padding-top:28px; }
-
 main { padding-bottom:125px; }
 
 h1 {
@@ -52,14 +51,14 @@ h1 {
 }
 
 h2 {
-  margin:26px 0 13px;
+  margin:25px 0 13px;
   font-size:20px;
 }
 
 .subtitle {
   color:var(--muted);
   font-size:13px;
-  line-height:1.5;
+  line-height:1.6;
 }
 
 .auth-bar {
@@ -108,10 +107,7 @@ h2 {
 }
 
 .mode-switch { margin-bottom:13px; }
-
-.tabs {
-  margin:21px 0 22px;
-}
+.tabs { margin:21px 0 22px; }
 
 .pill {
   flex-shrink:0;
@@ -261,7 +257,7 @@ h2 {
   display:block;
   color:var(--muted);
   font-size:12px;
-  line-height:1.4;
+  line-height:1.5;
   margin-top:4px;
 }
 
@@ -361,6 +357,11 @@ h2 {
   cursor:pointer;
 }
 
+.upload-btn:disabled {
+  opacity:.5;
+  cursor:wait;
+}
+
 .danger-btn {
   background:#372424;
   border:1px solid #704040;
@@ -395,6 +396,33 @@ h2 {
   font-size:11px;
 }
 
+.progress-container {
+  margin-top:20px;
+  text-align:left;
+}
+
+.progress-bar {
+  width:100%;
+  height:9px;
+  border-radius:10px;
+  background:#333;
+  overflow:hidden;
+  margin:12px 0;
+}
+
+.progress-fill {
+  width:0%;
+  height:100%;
+  background:var(--green);
+  transition:width .2s;
+}
+
+.progress-text {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+
 .bottom-nav {
   position:fixed;
   bottom:0;
@@ -421,7 +449,6 @@ h2 {
 }
 
 .bottom-nav button.active { color:var(--green); }
-
 .bottom-nav .icon { font-size:23px; }
 
 .hidden { display:none!important; }
@@ -449,7 +476,7 @@ h2 {
     </button>
 
     <span class="status" id="authStatus">
-      Modo demonstração
+      Modo histórico
     </span>
 
     <button
@@ -493,11 +520,13 @@ h2 {
 <input
   type="file"
   id="historyFiles"
-  accept=".json,application/json"
+  accept=".zip,.json,application/zip,application/json"
   multiple
   hidden
   onchange="importHistory(event)"
 >
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <script>
 
@@ -549,6 +578,7 @@ let spotifyArtists = [];
 let spotifySongs = [];
 
 let listeningHistory = [];
+let importedCount = 0;
 
 let dismissedNotices = new Set();
 let currentMessage = null;
@@ -556,27 +586,9 @@ let currentMessage = null;
 let loadingSpotify = false;
 let spotifyRequestId = 0;
 
-/* ======================================
-   DEMONSTRAÇÃO
-====================================== */
-
-const demo = {
-  month:"2024-09",
-  minutes:9974,
-  artists:[
-    {name:"Henrique & Juliano",minutes:2431},
-    {name:"Michael Jackson",minutes:1672},
-    {name:"Fred & Gustavo",minutes:1098},
-    {name:"Jorge & Mateus",minutes:856},
-    {name:"Bruno & Marrone",minutes:724}
-  ],
-  songs:[
-    {name:"Ainda Gosto de Você",artist:"Sorriso Maroto",plays:127},
-    {name:"Arranhão",artist:"Henrique & Juliano",plays:92},
-    {name:"A Maior Saudade",artist:"Henrique & Juliano",plays:78},
-    {name:"Billie Jean",artist:"Michael Jackson",plays:73}
-  ]
-};
+let importing = false;
+let importProgress = 0;
+let importStatus = "";
 
 /* ======================================
    UTILITÁRIOS
@@ -600,6 +612,7 @@ function safeImage(url) {
 
   try {
     const parsed = new URL(url);
+
     return parsed.protocol === "https:"
       ? escapeHTML(parsed.href)
       : "";
@@ -619,10 +632,6 @@ function minutes(ms) {
 function monthName(key) {
   const [year,month] = key.split("-").map(Number);
   return months[month-1] + " " + year;
-}
-
-function currentMonthKey() {
-  return new Date().toISOString().slice(0,7);
 }
 
 function noticeHTML(id,text,error=false) {
@@ -669,6 +678,10 @@ function renderMessages() {
         currentMessage.error
       )
     : "";
+}
+
+function sleepFrame() {
+  return new Promise(resolve => setTimeout(resolve,0));
 }
 
 /* ======================================
@@ -957,9 +970,7 @@ function saveCache(selectedRange,artists,songs) {
       CACHE_KEY,
       JSON.stringify(cache)
     );
-  } catch {
-    // O aplicativo continua funcionando sem cache.
-  }
+  } catch {}
 }
 
 async function loadSpotifyData() {
@@ -1015,6 +1026,7 @@ async function loadSpotifyData() {
       error.message,
       true
     );
+
   } finally {
     if (requestId === spotifyRequestId) {
       loadingSpotify = false;
@@ -1049,90 +1061,102 @@ function openDatabase() {
   });
 }
 
-async function saveHistory(records) {
+async function saveHistoryBatch(records) {
+  if (!records.length) return;
+
   const db = await openDatabase();
 
-  return new Promise((resolve,reject) => {
-    const tx = db.transaction(
-      STORE_NAME,
-      "readwrite"
-    );
+  try {
+    await new Promise((resolve,reject) => {
+      const tx = db.transaction(
+        STORE_NAME,
+        "readwrite"
+      );
 
-    const store = tx.objectStore(STORE_NAME);
+      const store = tx.objectStore(STORE_NAME);
 
-    for (const record of records) {
-      store.put(record);
-    }
+      for (const record of records) {
+        store.put(record);
+      }
 
-    tx.oncomplete = () => {
-      db.close();
-      resolve();
-    };
-
-    tx.onerror = () => {
-      db.close();
-      reject(tx.error);
-    };
-  });
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(
+        tx.error || new Error("Falha ao salvar histórico")
+      );
+      tx.onabort = () => reject(
+        tx.error || new Error("Gravação interrompida")
+      );
+    });
+  } finally {
+    db.close();
+  }
 }
 
 async function loadHistory() {
   const db = await openDatabase();
 
-  return new Promise((resolve,reject) => {
-    const tx = db.transaction(
-      STORE_NAME,
-      "readonly"
-    );
+  try {
+    const records = await new Promise((resolve,reject) => {
+      const tx = db.transaction(
+        STORE_NAME,
+        "readonly"
+      );
 
-    const request =
-      tx.objectStore(STORE_NAME).getAll();
+      const request =
+        tx.objectStore(STORE_NAME).getAll();
 
-    request.onsuccess = () => {
-      listeningHistory = request.result || [];
-      db.close();
-      resolve();
-    };
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
 
-    request.onerror = () => {
-      db.close();
-      reject(request.error);
-    };
-  });
+    listeningHistory = records;
+    importedCount = records.length;
+
+  } finally {
+    db.close();
+  }
 }
 
 async function clearHistory() {
+  if (importing) return;
+
   if (!confirm(
     "Apagar todo o histórico importado deste navegador?"
   )) return;
 
   const db = await openDatabase();
 
-  await new Promise((resolve,reject) => {
-    const tx = db.transaction(
-      STORE_NAME,
-      "readwrite"
-    );
+  try {
+    await new Promise((resolve,reject) => {
+      const tx = db.transaction(
+        STORE_NAME,
+        "readwrite"
+      );
 
-    tx.objectStore(STORE_NAME).clear();
+      tx.objectStore(STORE_NAME).clear();
 
-    tx.oncomplete = resolve;
-    tx.onerror = () => reject(tx.error);
-  });
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
 
-  db.close();
+    listeningHistory = [];
+    importedCount = 0;
 
-  listeningHistory = [];
+    notify("Histórico local apagado.");
+    render();
 
-  notify("Histórico local apagado.");
-  render();
+  } finally {
+    db.close();
+  }
 }
 
 /* ======================================
-   IMPORTAÇÃO JSON
+   NORMALIZAÇÃO DOS REGISTROS
 ====================================== */
 
 function normalizeRecord(item) {
+  if (!item || typeof item !== "object") return null;
+
   const dateText = item.ts || item.endTime;
 
   if (!dateText) return null;
@@ -1142,8 +1166,9 @@ function normalizeRecord(item) {
   if (item.ts) {
     date = new Date(item.ts);
   } else {
-    // O formato antigo utiliza UTC sem indicador de fuso.
-    date = new Date(item.endTime.replace(" ","T")+"Z");
+    date = new Date(
+      item.endTime.replace(" ","T")+"Z"
+    );
   }
 
   if (isNaN(date.getTime())) return null;
@@ -1174,6 +1199,16 @@ function normalizeRecord(item) {
   const uri =
     item.spotify_track_uri || "";
 
+  /*
+    Não armazenamos:
+    - Endereço IP
+    - País de conexão
+    - Plataforma
+    - Identificadores de dispositivos
+
+    Guardamos apenas informações musicais.
+  */
+
   const id = [
     timestamp,
     uri || artist+"|"+track,
@@ -1192,55 +1227,186 @@ function normalizeRecord(item) {
   };
 }
 
+/* ======================================
+   PROGRESSO DA IMPORTAÇÃO
+====================================== */
+
+function updateProgress(percent,text) {
+  importProgress = Math.max(
+    0,
+    Math.min(100,Math.round(percent))
+  );
+
+  importStatus = text;
+
+  const fill = $("progressFill");
+  const label = $("progressText");
+
+  if (fill) {
+    fill.style.width = importProgress+"%";
+  }
+
+  if (label) {
+    label.textContent = importStatus;
+  }
+}
+
+/* ======================================
+   IMPORTAÇÃO ZIP E JSON
+====================================== */
+
 async function importHistory(event) {
+  if (importing) return;
+
   const files = Array.from(event.target.files || []);
 
   if (!files.length) return;
 
-  notify("Lendo arquivos JSON...");
+  importing = true;
+  importProgress = 0;
+  importStatus = "Preparando arquivos...";
 
-  let records = [];
+  source = "history";
+  currentPage = "history";
+
+  render();
+
+  let processedFiles = 0;
+  let totalFiles = 0;
+  let validRecords = 0;
   let invalidFiles = [];
 
   try {
+    const jsonEntries = [];
+
     for (const file of files) {
-      try {
-        const text = await file.text();
-        const parsed = JSON.parse(text);
+      const filename = file.name.toLowerCase();
 
-        if (!Array.isArray(parsed)) {
-          invalidFiles.push(file.name);
-          continue;
+      if (filename.endsWith(".zip")) {
+        if (typeof JSZip === "undefined") {
+          throw new Error(
+            "A biblioteca de descompactação não carregou. "+
+            "Verifique sua conexão com a internet."
+          );
         }
 
-        for (const item of parsed) {
-          const record = normalizeRecord(item);
+        updateProgress(
+          2,
+          "Abrindo arquivo ZIP..."
+        );
 
-          if (record) records.push(record);
+        await sleepFrame();
+
+        const zip = await JSZip.loadAsync(file);
+
+        const entries = Object.values(zip.files)
+          .filter(entry => {
+            if (entry.dir) return false;
+
+            const name = entry.name.toLowerCase();
+
+            return (
+              name.endsWith(".json") &&
+              (
+                name.includes("streaming_history_audio") ||
+                name.includes("audio_") ||
+                name.includes("streaminghistory_music")
+              )
+            );
+          });
+
+        for (const entry of entries) {
+          jsonEntries.push({
+            name:entry.name,
+            read:()=>entry.async("string")
+          });
         }
 
-      } catch {
-        invalidFiles.push(file.name);
+      } else if (filename.endsWith(".json")) {
+        jsonEntries.push({
+          name:file.name,
+          read:()=>file.text()
+        });
       }
     }
 
-    if (!records.length) {
-      notify(
-        "Nenhuma reprodução válida encontrada. "+
-        "Confira se os arquivos são do histórico de reprodução do Spotify.",
-        true
+    totalFiles = jsonEntries.length;
+
+    if (!totalFiles) {
+      throw new Error(
+        "Não encontrei arquivos JSON de histórico musical no ZIP."
       );
-      return;
     }
 
-    // Remove registros repetidos do mesmo lote.
-    const unique = new Map();
+    for (const entry of jsonEntries) {
+      updateProgress(
+        5+(processedFiles/totalFiles)*85,
+        "Processando arquivo "+
+        (processedFiles+1)+" de "+totalFiles+"..."
+      );
 
-    for (const record of records) {
-      unique.set(record.id,record);
+      await sleepFrame();
+
+      try {
+        const text = await entry.read();
+        const parsed = JSON.parse(text);
+
+        if (!Array.isArray(parsed)) {
+          invalidFiles.push(entry.name);
+          processedFiles++;
+          continue;
+        }
+
+        const batch = [];
+        const batchSize = 2000;
+
+        for (let i=0;i<parsed.length;i++) {
+          const record = normalizeRecord(parsed[i]);
+
+          if (record) {
+            batch.push(record);
+            validRecords++;
+          }
+
+          if (batch.length>=batchSize) {
+            await saveHistoryBatch(batch);
+            batch.length = 0;
+
+            await sleepFrame();
+          }
+        }
+
+        if (batch.length) {
+          await saveHistoryBatch(batch);
+        }
+
+      } catch(error) {
+        invalidFiles.push(entry.name);
+      }
+
+      processedFiles++;
+
+      updateProgress(
+        5+(processedFiles/totalFiles)*85,
+        "Concluído: "+processedFiles+
+        " de "+totalFiles+" arquivos."
+      );
+
+      await sleepFrame();
     }
 
-    await saveHistory([...unique.values()]);
+    if (!validRecords) {
+      throw new Error(
+        "Nenhum registro musical válido foi encontrado."
+      );
+    }
+
+    updateProgress(
+      94,
+      "Carregando estatísticas..."
+    );
+
+    await sleepFrame();
     await loadHistory();
 
     const available = availableMonths();
@@ -1250,26 +1416,38 @@ async function importHistory(event) {
       historyYear = Number(selectedMonth.slice(0,4));
     }
 
-    source = "history";
+    updateProgress(
+      100,
+      "Importação concluída!"
+    );
+
+    importing = false;
     currentPage = "home";
     currentTab = "overview";
 
     notify(
-      number(unique.size)+
-      " registros processados. "+
+      number(importedCount)+
+      " registros musicais armazenados. "+
+      "Histórico pronto para explorar!"+
       (invalidFiles.length
-        ? invalidFiles.length+" arquivo(s) não reconhecido(s)."
-        : "Importação concluída!")
+        ? " Alguns arquivos não puderam ser processados."
+        : "")
     );
 
     render();
 
   } catch(error) {
+    importing = false;
+
     notify(
-      "Erro ao importar histórico: "+error.message,
+      "Erro na importação: "+error.message,
       true
     );
+
+    render();
+
   } finally {
+    importing = false;
     event.target.value = "";
   }
 }
@@ -1388,7 +1566,7 @@ function rankList(items,type,mode) {
     } else {
       detail = isArtist
         ? number(minutes(item.ms))+" minutos"
-        : escapeHTML(item.artist)+" · "+
+        : item.artist+" · "+
           number(item.plays)+" reproduções";
     }
 
@@ -1497,7 +1675,7 @@ function spotifyOverview() {
       "api_limits",
       "Os rankings da API não informam minutos "+
       "ou números exatos de reproduções. "+
-      "Para essas estatísticas, importe seu histórico."
+      "Para essas estatísticas, utilize seu histórico."
     )}
 
     <div class="grid">
@@ -1530,42 +1708,18 @@ function historyOverview() {
   if (!hasRealHistory()) {
     return `
       ${noticeHTML(
-        "demo",
-        "O histórico abaixo é uma demonstração. "+
-        "Importe seus arquivos JSON para visualizar "+
-        "suas estatísticas reais."
+        "no_history",
+        "Importe seu histórico estendido do Spotify "+
+        "para visualizar estatísticas mensais reais."
       )}
 
+      ${importPanel()}
+
       <div class="card">
-        <div class="label">Tempo ouvido — demonstração</div>
-        <div class="big-number">
-          ${number(demo.minutes)}
-        </div>
-        <div>minutos em setembro de 2024</div>
-      </div>
-
-      <div class="grid">
-        ${favoriteCard(
-          demo.artists[0],"artist","history"
-        )}
-
-        ${favoriteCard(
-          demo.songs[0],"song","history"
-        )}
-      </div>
-
-      <h2>Artistas — demonstração</h2>
-      <div class="card">
-        ${demo.artists.map((a,i)=>`
-          <div class="rank-item">
-            <div class="rank-number">${i+1}</div>
-            <div class="rank-icon">🎤</div>
-            <div class="rank-info">
-              <strong>${escapeHTML(a.name)}</strong>
-              <small>${number(a.minutes)} minutos</small>
-            </div>
-          </div>
-        `).join("")}
+        <p class="empty">
+          Seu histórico ainda não foi importado.
+          Selecione o ZIP original recebido do Spotify.
+        </p>
       </div>
     `;
   }
@@ -1573,12 +1727,14 @@ function historyOverview() {
   const stats = monthlyStats();
 
   if (!stats.plays) {
-    return `<div class="card">
-      <p class="empty">
-        Não há reproduções registradas em
-        ${escapeHTML(monthName(selectedMonth))}.
-      </p>
-    </div>`;
+    return `
+      <div class="card">
+        <p class="empty">
+          Não há reproduções registradas em
+          ${escapeHTML(monthName(selectedMonth))}.
+        </p>
+      </div>
+    `;
   }
 
   return `
@@ -1607,28 +1763,56 @@ function historyOverview() {
 }
 
 /* ======================================
-   IMPORTAÇÃO / HISTÓRICO
+   PAINEL DE IMPORTAÇÃO
 ====================================== */
 
 function importPanel() {
   return `
     <div class="upload-box">
-      <strong>📂 Importar histórico do Spotify</strong>
+
+      <strong>📦 Importar histórico do Spotify</strong>
 
       <p>
-        Selecione um ou vários arquivos JSON do
-        histórico de reprodução.
-        Os dados ficam armazenados neste navegador.
+        Selecione o arquivo ZIP original recebido
+        do Spotify ou arquivos JSON individuais.
+        Seus dados serão processados neste navegador.
       </p>
 
       <button
         class="upload-btn"
+        ${importing?"disabled":""}
         onclick="$('historyFiles').click()">
-        Selecionar arquivos JSON
+
+        ${importing
+          ? "Importando..."
+          : "Selecionar ZIP ou JSON"}
       </button>
+
+      ${importing ? `
+        <div class="progress-container">
+
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              id="progressFill"
+              style="width:${importProgress}%">
+            </div>
+          </div>
+
+          <div class="progress-text" id="progressText">
+            ${escapeHTML(importStatus)}
+          </div>
+
+        </div>
+      ` : ""}
+
     </div>
   `;
 }
+
+/* ======================================
+   HISTÓRICO MENSAL
+====================================== */
 
 function historyPage() {
   const available = availableMonths();
@@ -1640,23 +1824,27 @@ function historyPage() {
 
     ${hasRealHistory()
       ? `<div class="card">
+
           <div class="label">Histórico importado</div>
+
           <div class="big-number">
-            ${number(listeningHistory.length)}
+            ${number(importedCount)}
           </div>
-          <div>registros armazenados</div>
+
+          <div>registros musicais armazenados</div>
 
           <br>
 
           <button
             class="danger-btn"
+            ${importing?"disabled":""}
             onclick="clearHistory()">
             Apagar histórico local
           </button>
+
         </div>`
       : `<p class="subtitle">
-          Ainda não há histórico real importado.
-          Setembro de 2024 contém apenas uma demonstração.
+          Ainda não há histórico importado.
         </p>`
     }
 
@@ -1679,23 +1867,18 @@ function historyPage() {
           historyYear+"-"+String(index+1).padStart(2,"0");
 
         const real = available.includes(key);
-        const demoMonth =
-          !hasRealHistory() && key==="2024-09";
 
         return `
           <button
-            class="month-tile ${real||demoMonth?"available":""}"
+            class="month-tile ${real?"available":""}"
             onclick="selectMonth('${key}')">
 
             ${month.slice(0,3)}
 
             <small>
-              ${real
-                ? "Disponível"
-                : demoMonth
-                  ? "Demonstração"
-                  : "Sem dados"}
+              ${real?"Disponível":"Sem dados"}
             </small>
+
           </button>
         `;
       }).join("")}
@@ -1726,7 +1909,6 @@ function allPeriodPage() {
   }
 
   const stats = allStats();
-
   const available = availableMonths();
 
   return `
@@ -1842,6 +2024,7 @@ function renderControls() {
 
   let html = `
     <div class="mode-switch">
+
       <button
         class="pill ${source==="history"?"active":""}"
         onclick="setSource('history')">
@@ -1853,12 +2036,14 @@ function renderControls() {
         onclick="setSource('spotify')">
         🟢 Spotify API
       </button>
+
     </div>
   `;
 
   if (source==="spotify") {
     html += `
       <div class="mode-switch">
+
         <button
           class="pill ${range==="short_term"?"active":""}"
           onclick="setRange('short_term')">
@@ -1876,6 +2061,7 @@ function renderControls() {
           onclick="setRange('long_term')">
           Longo prazo
         </button>
+
       </div>
     `;
   }
@@ -1884,9 +2070,6 @@ function renderControls() {
 }
 
 function renderBottomNav() {
-  // A API não possui histórico mensal exato.
-  // Portanto, só mostramos "Início" nesse modo.
-
   const pages = source==="spotify"
     ? [
         ["home","⌂","Início"]
@@ -1928,7 +2111,7 @@ function render() {
 
   $("authStatus").textContent = auth
     ? "Spotify conectado ✓"
-    : "Modo demonstração";
+    : "Modo histórico";
 
   if (source==="spotify" && currentPage!=="home") {
     currentPage = "home";
@@ -1980,6 +2163,7 @@ function render() {
   if (source==="spotify") {
     if (currentTab==="overview") {
       $("content").innerHTML = spotifyOverview();
+
     } else if (currentTab==="artists") {
       $("content").innerHTML = `
         <h2>Artistas mais ouvidos</h2>
@@ -1987,6 +2171,7 @@ function render() {
           ${rankList(spotifyArtists,"artist","spotify")}
         </div>
       `;
+
     } else {
       $("content").innerHTML = `
         <h2>Músicas mais ouvidas</h2>
@@ -2025,6 +2210,7 @@ function render() {
         ${rankList(stats.artists,"artist","history")}
       </div>
     `;
+
   } else {
     $("content").innerHTML = `
       <h2>Músicas — ${escapeHTML(monthName(selectedMonth))}</h2>
